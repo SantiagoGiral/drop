@@ -24,4 +24,4 @@ La ilustración del encabezado es decorativa y no pretende mostrar el producto. 
 3. Pulsa «Consultar y pedir por WhatsApp». Debe abrirse WhatsApp con un mensaje que puedes revisar antes de enviar.
 4. Sin número configurado, el botón informa cómo activarlo y no crea un enlace a un número inventado.
 
-El precio inicial mostrado es `$43.900 COP`. Confirma que ese precio y el número configurado correspondan a tu oferta antes de compartir la página. Este proyecto no se ha desplegado ni publicado.
+El precio actual del escurridor mostrado es `$59.900 COP`. Confirma que los precios y el número configurado correspondan a tu oferta antes de compartir la página. Este proyecto no se ha desplegado ni publicado.

@@ -58,18 +58,19 @@ function renderCard(p, validImages) {
       ? `<img src="${attr(localImage.previewSrc)}" alt="${attr(localImage.alt)}" loading="lazy" data-image-fallback>`
       : `<div class="image-pending" role="img" aria-label="FotografÃ­a pendiente"><span class="pending-icon" aria-hidden="true">âŒ‚</span><span>FotografÃ­a pendiente</span></div>`;
     const variantSelectId = p.draftOffers?.length ? `draft-variant-${p.id}` : '';
+    const exactPrices = (p.draftOffers || []).map((offer) => offer.priceCop).filter(Number.isInteger);
+    const highestVariantPrice = exactPrices.length ? Math.max(...exactPrices) : null;
     const options = p.draftOffers?.length ? p.draftOffers.map((offer) => {
-      const optionPrice = offer.priceText || (Number.isInteger(offer.priceCop) ? `${formatPrice(offer.priceCop)} COP` : '');
-      const label = offer.priceCop ? `${offer.name} - ${formatPrice(offer.priceCop)} COP` : offer.name;
+      const optionPrice = highestVariantPrice ? `${formatPrice(highestVariantPrice)} COP` : offer.priceText || '';
+      const label = highestVariantPrice ? `${offer.name} - ${formatPrice(highestVariantPrice)} COP` : offer.name;
       return `<option value="${attr(offer.name)}" data-price-text="${attr(optionPrice)}">${esc(label)}</option>`;
     }).join('') : '';
     const variantMarkup = p.draftOffers?.length ? `<label class="draft-variant-label" for="${attr(variantSelectId)}">Selecciona ${esc(p.draftVariants?.label || 'una opci&#243;n')}</label><select id="${attr(variantSelectId)}" class="draft-variant-select" data-whatsapp-variant-select="${attr(variantSelectId)}"><option value="">Elige una opci&#243;n</option>${options}</select>` : '';
-    const exactPrices = (p.draftOffers || []).map((offer) => offer.priceCop).filter(Number.isInteger);
-    const price = exactPrices.length ? `<div class="preview-price"><span>Precio sugerido por variante</span><strong>${formatPrice(Math.min(...exactPrices))} - ${formatPrice(Math.max(...exactPrices))} <small>COP</small></strong><span class="price-status">Elige una variante</span></div>`
-      : p.draftStartingPriceCop ? `<div class="preview-price"><span>Precio sugerido</span><strong>Desde ${formatPrice(p.draftStartingPriceCop)} <small>COP</small></strong><span class="price-status">Propuesta provisional</span></div>`
+    const price = highestVariantPrice ? `<div class="preview-price"><span>Precio</span><strong>${formatPrice(highestVariantPrice)} <small>COP</small></strong></div>`
+      : p.draftStartingPriceCop ? `<div class="preview-price"><span>Precio</span><strong>Desde ${formatPrice(p.draftStartingPriceCop)} <small>COP</small></strong></div>`
       : p.proposedSalePriceCop === null ? '<div class="preview-price"><span>Precio de venta</span><strong>Por definir seg\u00fan variante</strong><span class="price-status">Pendiente de confirmar</span></div>'
-      : `<div class="preview-price"><span>Precio de venta propuesto</span><strong>${formatPrice(p.proposedSalePriceCop)} <small>COP</small></strong><span class="price-status">Propuesta provisional</span></div>`;
-    const orderPrice = p.draftStartingPriceCop ? `Desde ${formatPrice(p.draftStartingPriceCop)} COP` : (Number.isInteger(p.proposedSalePriceCop) ? `${formatPrice(p.proposedSalePriceCop)} COP` : '');
+      : `<div class="preview-price"><span>Precio</span><strong>${formatPrice(p.proposedSalePriceCop)} <small>COP</small></strong></div>`;
+    const orderPrice = highestVariantPrice ? `${formatPrice(highestVariantPrice)} COP` : p.draftStartingPriceCop ? `Desde ${formatPrice(p.draftStartingPriceCop)} COP` : (Number.isInteger(p.proposedSalePriceCop) ? `${formatPrice(p.proposedSalePriceCop)} COP` : '');
     const orderButton = `<a class="button button-whatsapp" href="#" data-whatsapp-product="${attr(p.name)}" data-whatsapp-price="${attr(orderPrice)}"${variantSelectId ? ` data-whatsapp-variant-select="${attr(variantSelectId)}"` : ''} data-whatsapp-note="whatsapp-note-${attr(p.id)}" aria-disabled="true">Pedir por WhatsApp</a>`;
     const orderNote = `<p class="contact-note" id="whatsapp-note-${attr(p.id)}">El mensaje se prepara para revisar y enviar por WhatsApp.</p>`;
     const description = p.cardDescription ? `<p class="draft-card-description">${esc(p.cardDescription)}</p>` : '';
@@ -94,9 +95,9 @@ const FILTER_CATEGORY_LABELS = { cocina:'Cocina', bano:'Ba\u00f1o', limpieza:'Li
 function heroPrice(product) {
   if (product.status === 'published') return { label:'Precio', value:`${formatPrice(product.salePriceCop)} COP` };
   const exactOffers = (product.draftOffers || []).map((offer) => offer.priceCop).filter(Number.isInteger);
-  if (exactOffers.length) return { label:'Precio sugerido', value:`${formatPrice(Math.min(...exactOffers))} - ${formatPrice(Math.max(...exactOffers))} COP` };
-  if (product.draftStartingPriceCop) return { label:'Precio sugerido', value:`Desde ${formatPrice(product.draftStartingPriceCop)} COP` };
-  if (Number.isInteger(product.proposedSalePriceCop)) return { label:'Precio propuesto', value:`${formatPrice(product.proposedSalePriceCop)} COP` };
+  if (exactOffers.length) return { label:'Precio', value:`${formatPrice(Math.max(...exactOffers))} COP` };
+  if (product.draftStartingPriceCop) return { label:'Precio', value:`Desde ${formatPrice(product.draftStartingPriceCop)} COP` };
+  if (Number.isInteger(product.proposedSalePriceCop)) return { label:'Precio', value:`${formatPrice(product.proposedSalePriceCop)} COP` };
   return { label:'Precio', value:'Pendiente de confirmar' };
 }
 

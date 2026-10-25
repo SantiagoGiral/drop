@@ -4,7 +4,6 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { buildOutputs, writeOutputs, MARKER } = require('./build-catalog');
-const { calculateMinimumPrice } = require('../js/pricing');
 const root = path.resolve(__dirname, '..');
 const data = JSON.parse(fs.readFileSync(path.join(root, 'catalog/products.json'), 'utf8'));
 const internalTableFile = path.join(os.tmpdir(), 'casa_clara_tabla_precios_envio_20k.json');
@@ -12,9 +11,11 @@ const internalTable = fs.existsSync(internalTableFile) ? JSON.parse(fs.readFileS
 const expected = new Map([['924885',59900],['1899391',114900],['1976352',74900],['700560',79900],['2241912',79900],['2146043',74900]]);
 const published = data.products.filter((p) => p.status === 'published');
 const drafts = data.products.filter((p) => p.status === 'draft');
+const shoeDraft = drafts.find((p) => p.dropiId === '1829387');
 assert.equal(published.length, 6, 'se conservan seis productos publicados');
 assert.deepEqual(new Map(published.map((p) => [p.dropiId, p.salePriceCop])), expected, 'precios actuales sin cambios');
 assert.equal(drafts.length, 11, 'se importaron los 11 productos encontrados como borradores');
+assert.deepEqual(shoeDraft.draftOffers.map((offer) => offer.priceCop), [111000,111000], 'ambos colores del zapatero conservan solo el precio más alto elegido');
 if (internalTable) {
   assert.equal(internalTable.length, 12, 'tabla interna incluye los 11 borradores y la consulta pendiente');
   for (const row of internalTable) {
@@ -28,7 +29,10 @@ if (internalTable) {
   assert.equal(internalTable.filter((row) => row.estado_precio === 'pendiente_variante').length, 2);
   assert.equal(internalTable.find((row) => row.id_dropi === '2118677').estado_precio, 'pendiente_identificar');
 }
-assert.match(fs.readFileSync(path.join(root,'admin/vista-previa-dropi.html'),'utf8'), /Envío estimado: \$20\.000 COP/);
+assert.ok(!fs.existsSync(path.join(root,'admin/calculadora.html')) && !fs.existsSync(path.join(root,'admin/vista-previa-dropi.html')), 'se retiraron las páginas de administración');
+assert.ok(!fs.existsSync(path.join(root,'js/dropi-preview.js')), 'se retiró el script de vista previa');
+assert.ok(!fs.existsSync(path.join(root,'css/dropi-preview.css')), 'se retiraron los estilos de vista previa');
+assert.ok(!fs.existsSync(path.join(root,'js/calculator.js')) && !fs.existsSync(path.join(root,'js/pricing.js')) && !fs.existsSync(path.join(root,'css/calculator.css')), 'se retiró la interfaz y lógica de calculadora del proyecto');
 const ids = new Set(data.products.map((p) => p.id));
 assert.equal(ids.size, data.products.length, 'no hay productos duplicados');
 const privateKeys = /^(supplierCost|supplierId|stockReported|suggestedPriceCop|storefrontPriceCop|notes|supplier_cost_cop|supplier_id|stock_reported|suggested_price_cop|storefront_price_cop)$/i;
@@ -77,25 +81,39 @@ const homepage = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 assert.equal((homepage.match(/class="catalog-card(?: preview-card)?"/g) || []).length, 17, 'portada muestra seis publicados y once borradores');
 assert.equal((homepage.match(/data-catalog-filter=/g) || []).length, 6, 'portada ofrece filtro general y cinco categorias');
 assert.match(homepage, /hero-product[\s\S]*img\/imagenDrop1\.jpg/);
+assert.equal((fs.readFileSync(path.join(root,'templates/index.html'),'utf8').match(/data-hero-title/g) || []).length, 1, 'el pie del carrusel no duplica el título');
 assert.equal((homepage.match(/data-hero-slide(?:\s|>)/g) || []).length, 17, 'carrusel destaca todos los productos');
 for (const control of ['data-hero-previous','data-hero-next','data-hero-toggle','data-hero-count']) assert.ok(homepage.includes(control), `carrusel incluye control ${control}`);
 assert.ok(!homepage.includes('class="art-card"') && !homepage.includes('class="art-sun"'), 'se elimina la ilustracion hero anterior');
 assert.equal((homepage.match(/data-category="(?:cocina|bano|limpieza|tecnologia|hogar)"/g) || []).length, 17, 'todas las tarjetas tienen categoria filtrable');
+const shoeCardStart = homepage.indexOf('data-product-id="dropi-1829387"');
+const shoeCard = homepage.slice(shoeCardStart, homepage.indexOf('</article>', shoeCardStart));
+assert.equal((shoeCard.match(/data-price-text="\$111\.000 COP"/g) || []).length, 2, 'ambos colores del zapatero usan el precio más alto en WhatsApp');
+assert.ok(!shoeCard.includes('$109.900'), 'el catálogo ya no muestra el precio menor del zapatero');
 assert.match(fs.readFileSync(path.join(root,'js/main.js'),'utf8'), /card\.hidden = !show/);
-assert.ok(homepage.includes('no crean pedidos'), 'WhatsApp does not create orders automatically');
+assert.ok(homepage.includes('no crea pedidos automáticamente'), 'WhatsApp does not create orders automatically');
 assert.ok(!/(horarios internos|generaci[oó]n de gu[ií]as|instrucciones log[ií]sticas|internal_note)/i.test(homepage), 'la portada no expone notas internas ni logística');
 for (const p of published) { const cardStart=homepage.indexOf(`data-product-id="${p.id}"`); const card=homepage.slice(cardStart,homepage.indexOf('</article>',cardStart)); assert.ok(card.includes(`data-whatsapp-product="${p.name}"`), `${p.dropiId} tiene boton de WhatsApp`); }
 for (const p of published) assert.ok(sitemap.includes(`/productos/${p.slug}.html`), `sitemap contiene ${p.slug}`);
 for (const p of drafts) {
   assert.ok(!sitemap.includes(p.slug), `sitemap omite borrador ${p.dropiId}`);
   assert.ok(homepage.includes(`data-product-id="${p.id}"`), `portada muestra borrador ${p.dropiId}`);
-  if (p.proposalStatus === 'propuesto') assert.ok(homepage.includes(new Intl.NumberFormat('es-CO').format(p.proposedSalePriceCop)), 'proposed price appears'); else assert.ok(/variante/i.test(homepage), 'variant pending appears');
+  if (p.proposalStatus === 'propuesto') assert.ok(homepage.includes(new Intl.NumberFormat('es-CO').format(p.proposedSalePriceCop)), 'proposed price appears');
+  else if ((p.draftOffers || []).some((offer) => Number.isInteger(offer.priceCop))) assert.ok(homepage.includes(new Intl.NumberFormat('es-CO').format(Math.max(...p.draftOffers.map((offer) => offer.priceCop).filter(Number.isInteger)))), 'variant price uses the highest option');
+  else if (p.draftStartingPriceCop) assert.ok(homepage.includes(`Desde $${new Intl.NumberFormat('es-CO').format(p.draftStartingPriceCop)}`), 'starting price is preserved');
+  else assert.ok(/variante/i.test(homepage), 'variant pending appears');
   assert.ok(homepage.includes(p.cardDescription), `${p.dropiId} muestra la descripcion fuente en la portada`);
   for (const feature of p.draftFeatures) assert.ok(homepage.includes(feature), `${p.dropiId} muestra caracteristica: ${feature}`);
   if (p.draftMeasures) assert.ok(homepage.includes(p.draftMeasures), `${p.dropiId} muestra medidas originales`); else assert.ok(homepage.includes('Medidas:</strong> Pendientes de confirmar.'), `${p.dropiId} no inventa medidas`);
   if (p.draftPackageContents) assert.ok(homepage.includes(p.draftPackageContents), `${p.dropiId} muestra contenido recibido`);
   for (const option of p.draftVariants?.options || []) assert.ok(homepage.includes(option), `${p.dropiId} muestra opcion ${option}`);
-  for (const offer of p.draftOffers || []) { if (offer.priceCop) assert.ok(homepage.includes(new Intl.NumberFormat('es-CO').format(offer.priceCop)), `${p.dropiId} muestra el precio de ${offer.name}`); else assert.ok(homepage.includes(offer.priceText), `${p.dropiId} conserva el precio desde indicado`); }
+  const exactOfferPrices = (p.draftOffers || []).map((offer) => offer.priceCop).filter(Number.isInteger);
+  if (exactOfferPrices.length) {
+    const highest = Math.max(...exactOfferPrices);
+    assert.ok(homepage.includes(new Intl.NumberFormat('es-CO').format(highest)), `${p.dropiId} muestra el precio más alto de sus variantes`);
+    if (Math.min(...exactOfferPrices) < highest) assert.ok(!homepage.includes(new Intl.NumberFormat('es-CO').format(Math.min(...exactOfferPrices))), `${p.dropiId} ya no muestra un precio menor alternativo`);
+  }
+  for (const offer of p.draftOffers || []) if (offer.priceText) assert.ok(homepage.includes(offer.priceText), `${p.dropiId} conserva el precio desde indicado`);
   const cardStart=homepage.indexOf(`data-product-id="${p.id}"`); const cardEnd=homepage.indexOf('</article>',cardStart); const card=homepage.slice(cardStart,cardEnd); assert.ok(card.includes(`data-whatsapp-product="${p.name}"`), `${p.dropiId} tiene consulta por WhatsApp`); assert.ok(card.includes('Pedir por WhatsApp'), `${p.dropiId} muestra boton de pedido`); assert.ok(card.includes('data-whatsapp-note='), `${p.dropiId} tiene aviso de WhatsApp`);
   assert.ok(!fs.existsSync(path.join(root, `productos/${p.slug}.html`)), `no se genera ficha sin precio final para ${p.dropiId}`);
 }
@@ -105,14 +123,8 @@ assert.match(gridCss, /catalog-grid\{grid-template-columns:repeat\(3,minmax\(0,1
 assert.match(gridCss, /@media\(max-width:980px\)\{\.catalog-grid\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)\}\}/);
 assert.match(gridCss, /@media\(max-width:760px\)\{\.catalog-grid\{grid-template-columns:1fr\}\}/);
 assert.ok(!fs.readFileSync(path.join(root, 'js/main.js'), 'utf8').includes('.submit('), 'no se envían pedidos automáticamente');
-const preview = fs.readFileSync(path.join(root,'admin/vista-previa-dropi.html'),'utf8');
-assert.match(preview, /noindex, nofollow/);
-assert.ok(!/wa\.me|whatsapp-product|href="#"/.test(preview), 'la vista previa no permite iniciar pedidos');
-assert.match(fs.readFileSync(path.join(root,'js/dropi-preview.js'),'utf8'), /Precio de venta propuesto/);
-assert.ok(!/costo_dropi_cop|ganancia_antes_comisiones|envio_estimado_cop/.test(fs.readFileSync(path.join(root,'js/dropi-preview.js'),'utf8')), 'la vista no recibe ni muestra costos o márgenes');
-const previewScript = fs.readFileSync(path.join(root,'js/dropi-preview.js'),'utf8');
 const staticHomepage = fs.readFileSync(path.join(root,'index.html'),'utf8');
-assert.ok(!/costo_dropi_cop|precio_base_provisional_cop|dropi-preview\.js/.test(staticHomepage), 'la portada generada no incluye datos ni scripts de vista previa');
+assert.ok(!/costo_dropi_cop|precio_base_provisional_cop|dropi-preview\.js|Propuesta provisional|Precio de venta propuesto|Precio propuesto|Precio sugerido/.test(staticHomepage), 'la portada no incluye datos internos ni etiquetas de propuesta provisional');
 assert.ok(!fs.readFileSync(path.join(root,'scripts/serve-local.js'),'utf8').includes("html.replace('</head>'"), 'el servidor no vuelve a inyectar tarjetas duplicadas');
 const outputsA = buildOutputs(root), outputsB = buildOutputs(root);
 assert.deepEqual([...outputsA], [...outputsB], 'dos generaciones producen exactamente las mismas salidas');
@@ -144,12 +156,7 @@ try {
   assert.ok(remotePage.includes('loading="lazy" data-image-fallback'), 'imagen remota tiene lazy loading y fallback');
 } finally { fs.rmSync(temp, { recursive:true, force:true }); }
 
-const percent = calculateMinimumPrice({supplierCost:10, shippingCost:2, otherCost:0, desiredProfit:5, commissionRate:.05, fixedFee:0});
-assert.ok(percent.estimatedProfit >= 5 && percent.suggestedMinimum % 1000 === 900, 'comisión porcentual y redondeo ascendente mantienen ganancia mínima');
-const fixed = calculateMinimumPrice({supplierCost:10, shippingCost:2, desiredProfit:5, commissionRate:0, fixedFee:2});
-assert.ok(fixed.estimatedProfit >= 5, 'comisión fija se incluye en la fórmula');
-assert.throws(() => calculateMinimumPrice({supplierCost:1,desiredProfit:1,commissionRate:1}), /menor que 100/);
-console.log('OK: 6 productos publicados intactos, 11 borradores seguros, precios, imágenes, WhatsApp, sitemap, cuadrícula 4/5, importación idempotente y fórmulas.');
+console.log('OK: 6 productos publicados intactos, 11 borradores, precios, imágenes, WhatsApp, sitemap, cuadrícula 4/5 e importación idempotente.');
 
 assert.ok(!fs.readFileSync(path.join(root,'scripts/serve-local.js'),'utf8').includes('dropi-preview.js'), 'server does not inject duplicate cards');
 

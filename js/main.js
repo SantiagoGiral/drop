@@ -37,10 +37,11 @@
     const next = heroCarousel.querySelector('[data-hero-next]');
     const toggle = heroCarousel.querySelector('[data-hero-toggle]');
     const count = heroCarousel.querySelector('[data-hero-count]');
-    const category = heroCarousel.querySelector('[data-hero-category]');
-    const title = heroCarousel.querySelector('[data-hero-title]');
-    const priceLabel = heroCarousel.querySelector('[data-hero-price-label]');
-    const price = heroCarousel.querySelector('.hero-product-price [data-hero-price]');
+    const caption = heroCarousel.querySelector('.hero-product-caption');
+    const category = caption?.querySelector('[data-hero-category]');
+    const title = caption?.querySelector('[data-hero-title]');
+    const priceLabel = caption?.querySelector('[data-hero-price-label]');
+    const price = caption?.querySelector('[data-hero-price]');
     const productLink = heroCarousel.querySelector('[data-hero-product-link]');
     if (slides.length) {
       let current = Math.max(0, slides.findIndex((slide) => !slide.hidden));

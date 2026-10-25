@@ -161,6 +161,8 @@ for (const p of drafts) {
 }
 assert.ok(!sitemap.includes('set-utensilios'), 'set no agregado');
 const gridCss = fs.readFileSync(path.join(root, 'css/styles.css'), 'utf8');
+const draftCss = fs.readFileSync(path.join(root, 'css/draft-catalog.css'), 'utf8');
+assert.match(draftCss, /\.catalog-card\[hidden\]\{display:none!important\}/, 'los filtros ocultan visualmente las tarjetas fuera de la categoría');
 assert.match(gridCss, /catalog-grid\{grid-template-columns:repeat\(3,minmax\(0,1fr\)\)\}/);
 assert.match(gridCss, /@media\(max-width:980px\)\{\.catalog-grid\{grid-template-columns:repeat\(2,minmax\(0,1fr\)\)\}\}/);
 assert.match(gridCss, /@media\(max-width:760px\)\{\.catalog-grid\{grid-template-columns:1fr\}\}/);
@@ -203,3 +205,6 @@ console.log('OK: 6 productos publicados intactos, 11 borradores, precios, imáge
 assert.ok(!fs.readFileSync(path.join(root,'scripts/serve-local.js'),'utf8').includes('dropi-preview.js'), 'server does not inject duplicate cards');
 
 assert.match(fs.readFileSync(path.join(root,'js/main.js'),'utf8'), /data-whatsapp-variant-select/);
+assert.match(mainScript, /button\.target = "_blank"/, 'WhatsApp se abre en una pestaña aparte');
+assert.match(homepage, /js\/main\.js\?v=20261024-2/, 'la portada fuerza la carga de la versión actualizada del JavaScript');
+assert.match(homepage, /js\/config\.js\?v=20261024-2/, 'la portada fuerza la carga de la configuración actualizada de WhatsApp');

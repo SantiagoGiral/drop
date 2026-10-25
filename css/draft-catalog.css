@@ -5,6 +5,7 @@
 .catalog-filter.is-active{border-color:var(--green);background:var(--green);color:var(--white)}
 .catalog-filter:focus-visible{outline:3px solid rgba(189,89,66,.28);outline-offset:2px}
 .catalog-filter-status{min-height:16px;margin:8px 0 22px;color:var(--muted);font-size:11px;line-height:1.5}
+.catalog-card[hidden]{display:none!important}
 .draft-card-description{margin:0 0 10px}
 .draft-card-measures,.draft-card-package{margin:8px 0}
 .draft-card-facts{margin:10px 0}

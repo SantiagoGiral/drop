@@ -174,6 +174,8 @@
           const selectedPrice = option.dataset.priceText || price;
           const message = `Hola, quiero consultar y hacer un pedido de ${product}. Variante seleccionada: ${option.value}. Precio: ${selectedPrice}.`;
           button.href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+          button.target = "_blank";
+          button.rel = "noopener noreferrer";
           button.textContent = `Pedir ${option.value} por WhatsApp`;
           button.setAttribute("aria-label", `Consultar y pedir ${product}, variante ${option.value}, por WhatsApp`);
           button.removeAttribute("aria-disabled");
@@ -197,6 +199,8 @@
 
             const message = `Hola, quiero consultar y hacer un pedido de ${product}. Color consultado: ${selectedColor}. Precio: ${price}.`;
             button.href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+            button.target = "_blank";
+            button.rel = "noopener noreferrer";
             button.setAttribute("aria-label", `Consultar ${product}, color ${selectedColor}, por WhatsApp`);
             button.removeAttribute("aria-disabled");
             if (note) {
@@ -216,6 +220,8 @@
       } else {
         const message = `Hola, quiero consultar y hacer un pedido de ${product}. Precio: ${price}.`;
         button.href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+        button.target = "_blank";
+        button.rel = "noopener noreferrer";
         button.setAttribute("aria-label", `Consultar y pedir ${product} por WhatsApp`);
         button.removeAttribute("aria-disabled");
         if (note) {

@@ -1,0 +1,7 @@
+.git/
+admin/
+catalog/
+scripts/
+templates/
+README.md
+/.assetsignore

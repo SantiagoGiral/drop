@@ -6,6 +6,108 @@
     year.textContent = new Date().getFullYear();
   }
 
+  const catalogGrid = document.querySelector('.catalog-grid');
+  const filterButtons = [...document.querySelectorAll('[data-catalog-filter]')];
+  if (catalogGrid && filterButtons.length) {
+    const cards = [...catalogGrid.querySelectorAll('.catalog-card')];
+    const filterStatus = document.getElementById('catalog-filter-status');
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const category = button.dataset.catalogFilter;
+        let visible = 0;
+        cards.forEach((card) => {
+          const show = category === 'all' || card.dataset.category === category;
+          card.hidden = !show;
+          if (show) visible++;
+        });
+        filterButtons.forEach((filter) => {
+          const active = filter === button;
+          filter.classList.toggle('is-active', active);
+          filter.setAttribute('aria-pressed', String(active));
+        });
+        if (filterStatus) filterStatus.textContent = `Mostrando ${visible} de ${cards.length} productos.`;
+      });
+    });
+  }
+
+  const heroCarousel = document.querySelector('[data-hero-carousel]');
+  if (heroCarousel) {
+    const slides = [...heroCarousel.querySelectorAll('[data-hero-slide]')];
+    const previous = heroCarousel.querySelector('[data-hero-previous]');
+    const next = heroCarousel.querySelector('[data-hero-next]');
+    const toggle = heroCarousel.querySelector('[data-hero-toggle]');
+    const count = heroCarousel.querySelector('[data-hero-count]');
+    const category = heroCarousel.querySelector('[data-hero-category]');
+    const title = heroCarousel.querySelector('[data-hero-title]');
+    const priceLabel = heroCarousel.querySelector('[data-hero-price-label]');
+    const price = heroCarousel.querySelector('[data-hero-price]');
+    if (slides.length) {
+      let current = Math.max(0, slides.findIndex((slide) => !slide.hidden));
+      let userPaused = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+      let pointerPaused = false;
+      let focusPaused = false;
+      let timer = null;
+
+      const render = (index) => {
+        current = (index + slides.length) % slides.length;
+        const active = slides[current];
+        slides.forEach((slide, slideIndex) => {
+          const selected = slideIndex === current;
+          slide.hidden = !selected;
+          slide.setAttribute('aria-hidden', String(!selected));
+        });
+        if (count) count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+        if (category) category.textContent = active.dataset.heroCategory || '';
+        if (title) title.textContent = active.dataset.heroName || '';
+        if (priceLabel) priceLabel.textContent = active.dataset.heroPriceLabel || '';
+        if (price) price.textContent = active.dataset.heroPrice || '';
+      };
+      const stop = () => { if (timer) clearInterval(timer); timer = null; };
+      const start = () => {
+        stop();
+        if (!userPaused && !pointerPaused && !focusPaused && slides.length > 1 && !document.hidden) {
+          timer = setInterval(() => render(current + 1), 6000);
+        }
+      };
+      const step = (amount) => { render(current + amount); start(); };
+      previous?.addEventListener('click', () => step(-1));
+      next?.addEventListener('click', () => step(1));
+      toggle?.addEventListener('click', () => {
+        userPaused = !userPaused;
+        toggle.setAttribute('aria-pressed', String(userPaused));
+        toggle.setAttribute('aria-label', userPaused ? 'Reanudar rotación' : 'Pausar rotación');
+        toggle.textContent = userPaused ? '▶' : 'Ⅱ';
+        start();
+      });
+      heroCarousel.addEventListener('mouseenter', () => { pointerPaused = true; stop(); });
+      heroCarousel.addEventListener('mouseleave', () => { pointerPaused = false; start(); });
+      heroCarousel.addEventListener('focusin', () => { focusPaused = true; stop(); });
+      heroCarousel.addEventListener('focusout', (event) => {
+        if (!heroCarousel.contains(event.relatedTarget)) { focusPaused = false; start(); }
+      });
+      document.addEventListener('visibilitychange', start);
+      render(current);
+      if (toggle && userPaused) {
+        toggle.setAttribute('aria-pressed', 'true');
+        toggle.setAttribute('aria-label', 'Reanudar rotación');
+        toggle.textContent = '▶';
+      }
+      start();
+    }
+  }
+
+  document.querySelectorAll('img[data-image-fallback]').forEach((image) => {
+    image.addEventListener('error', () => {
+      if (image.dataset.fallbackShown) return;
+      image.dataset.fallbackShown = 'true';
+      image.hidden = true;
+      const fallback = document.createElement('span');
+      fallback.className = 'image-fallback';
+      fallback.setAttribute('role', 'img');
+      fallback.textContent = 'Imagen no disponible';
+      image.parentElement?.append(fallback);
+    });
+  });
 
   document.querySelectorAll("[data-product-gallery]").forEach((gallery) => {
     const mainImage = gallery.querySelector(".gallery-main-image");
@@ -13,6 +115,7 @@
     const images = thumbnails
       .map((thumbnail) => thumbnail.querySelector("img")?.getAttribute("src"))
       .filter(Boolean);
+    if (!mainImage || images.length < 2) return;
     const imageDescription = mainImage.alt.replace(/, vista \d+$/, "");
     let current = 0;
 
@@ -29,6 +132,10 @@
     gallery.querySelector(".gallery-previous").addEventListener("click", () => showImage(current - 1));
     gallery.querySelector(".gallery-next").addEventListener("click", () => showImage(current + 1));
     thumbnails.forEach((thumbnail) => thumbnail.addEventListener("click", () => showImage(Number(thumbnail.dataset.galleryIndex))));
+    gallery.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") showImage(current - 1);
+      if (event.key === "ArrowRight") showImage(current + 1);
+    });
   });
 
   document.querySelectorAll("[data-whatsapp-product]").forEach((button) => {
@@ -39,9 +146,34 @@
     const picker = pickerId
       ? document.querySelector(`[data-color-picker="${pickerId}"]`)
       : null;
+    const variantSelectId = button.dataset.whatsappVariantSelect;
+    const variantSelect = variantSelectId
+      ? document.querySelector(`[data-whatsapp-variant-select="${variantSelectId}"]`)
+      : null;
 
     if (number) {
-      if (picker) {
+      if (variantSelect) {
+        button.setAttribute("aria-disabled", "true");
+        button.textContent = "Selecciona una opci\u00f3n";
+        variantSelect.addEventListener("change", () => {
+          const option = variantSelect.selectedOptions[0];
+          if (!option?.value) {
+            button.setAttribute("aria-disabled", "true");
+            button.textContent = "Selecciona una opci\u00f3n";
+            return;
+          }
+          const selectedPrice = option.dataset.priceText || price;
+          const message = `Hola, quiero consultar y hacer un pedido de ${product}. Variante seleccionada: ${option.value}. Precio sugerido: ${selectedPrice}.`;
+          button.href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+          button.textContent = `Pedir ${option.value} por WhatsApp`;
+          button.setAttribute("aria-label", `Consultar y pedir ${product}, variante ${option.value}, por WhatsApp`);
+          button.removeAttribute("aria-disabled");
+          if (note) note.textContent = "Se abrir\u00e1 WhatsApp con el mensaje listo para revisar y enviar.";
+        });
+        button.addEventListener("click", (event) => {
+          if (button.getAttribute("aria-disabled") === "true") event.preventDefault();
+        });
+      } else if (picker) {
         let selectedColor = "";
         button.setAttribute("aria-disabled", "true");
 

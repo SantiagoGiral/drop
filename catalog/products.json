@@ -1,0 +1,769 @@
+{
+  "products": [
+    {
+      "id": "escurridor-platos",
+      "dropiId": "924885",
+      "slug": "escurridor-de-platos",
+      "status": "published",
+      "name": "Escurridor de platos metálico",
+      "category": "Para tu cocina",
+      "salePriceCop": 59900,
+      "cardDescription": "Ayuda a mantener secos y limpios los mostradores de la cocina. Su estante ajustable se adapta al fregadero y permite sostener platos, frutas u otros alimentos.",
+      "description": [
+        "Ayuda a mantener secos y limpios los mostradores de la cocina. Su estante ajustable se adapta al fregadero y permite sostener platos, frutas u otros alimentos."
+      ],
+      "features": [
+        {
+          "label": "Medidas",
+          "value": "30 × 25 × 10 cm."
+        }
+      ],
+      "notices": [],
+      "images": [
+        {
+          "src": "img/imagenDrop1.jpg",
+          "alt": "Escurridor metálico colocado sobre un fregadero"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "Escurridor de platos metálico | Casa Clara",
+        "description": "Escurridor de platos metálico para cocina. Precio: $59.900 COP. Consulta por WhatsApp."
+      }
+    },
+    {
+      "id": "soporte-organizador-cocina",
+      "dropiId": "1899391",
+      "slug": "soporte-organizador-cocina",
+      "status": "published",
+      "name": "Soporte Organizador de Cocina de Pared – 65 cm",
+      "category": "Organización de cocina",
+      "salePriceCop": 114900,
+      "cardDescription": "Soporte multifuncional de pared para organizar utensilios y accesorios de cocina. Plástico ABS, longitud de 65 cm.",
+      "description": [
+        "Dale más orden a tu cocina y aprovecha mejor cada espacio. Este soporte multifuncional de pared está diseñado para mantener tus utensilios y accesorios organizados y al alcance de la mano, ayudándote a liberar espacio en la encimera.",
+        "Su diseño compacto permite organizar diferentes elementos de cocina en un solo lugar, para que tengas un espacio más práctico y ordenado en tu día a día."
+      ],
+      "features": [
+        {
+          "label": "Longitud",
+          "value": "65 cm."
+        },
+        {
+          "label": "Dimensiones indicadas",
+          "value": "65 × 8,8 × 3 cm."
+        },
+        {
+          "label": "Material indicado en la ficha técnica",
+          "value": "Plástico ABS."
+        },
+        {
+          "label": "Uso",
+          "value": "Organización de utensilios y accesorios de cocina."
+        }
+      ],
+      "notices": [],
+      "images": [
+        {
+          "src": "img/Soporte_Cocina/ft1.jpg",
+          "alt": "Soporte organizador blanco de pared para cocina, vista 1"
+        },
+        {
+          "src": "img/Soporte_Cocina/ft2.jpg",
+          "alt": "Soporte organizador blanco de pared para cocina, vista 2"
+        },
+        {
+          "src": "img/Soporte_Cocina/ft3.jpg",
+          "alt": "Soporte organizador blanco de pared para cocina, vista 3"
+        },
+        {
+          "src": "img/Soporte_Cocina/ft4.jpg",
+          "alt": "Soporte organizador blanco de pared para cocina, vista 4"
+        },
+        {
+          "src": "img/Soporte_Cocina/ft5.jpg",
+          "alt": "Soporte organizador blanco de pared para cocina, vista 5"
+        },
+        {
+          "src": "img/Soporte_Cocina/ft6.jpg",
+          "alt": "Soporte organizador blanco de pared para cocina, vista 6"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "Soporte Organizador de Cocina de Pared - 65 cm | Casa Clara",
+        "description": "Soporte Organizador de Cocina de Pared de 65 cm en plástico ABS. Organiza utensilios y accesorios de cocina. $114.900 COP."
+      }
+    },
+    {
+      "id": "organizador-bano",
+      "dropiId": "1976352",
+      "slug": "organizador-de-bano",
+      "status": "published",
+      "name": "Organizador de Baño",
+      "category": "Organización del hogar · Baño",
+      "salePriceCop": 74900,
+      "cardDescription": "Aprovecha el espacio del baño y mantén organizadas toallas, jabones, detergentes y productos de aseo en sus tres niveles.",
+      "description": [
+        "Dale más orden a tu baño y aprovecha mejor el espacio. Este organizador metálico de tres niveles ayuda a mantener toallas, jabones, detergentes y productos de aseo organizados en un solo lugar.",
+        "Su estructura está descrita como resistente al óxido y de fácil armado, sin necesidad de perforaciones."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "img/Baño/bn1.webp",
+          "alt": "Organizador metálico de baño de tres niveles junto a un sanitario, vista 1"
+        },
+        {
+          "src": "img/Baño/bn2.webp",
+          "alt": "Organizador metálico de baño de tres niveles junto a un sanitario, vista 2"
+        },
+        {
+          "src": "img/Baño/bn3.jpeg",
+          "alt": "Empaque ilustrado del organizador de baño, vista 3"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "Organizador de Baño de Tres Niveles | Casa Clara",
+        "description": "Organizador metálico de baño de tres niveles para mantener ordenadas toallas, jabones y productos de aseo. $74.900 COP."
+      }
+    },
+    {
+      "id": "cepillo-limpieza-hogar",
+      "dropiId": "700560",
+      "slug": "cepillo-limpieza-hogar",
+      "status": "published",
+      "name": "Cepillo de Limpieza para el Hogar Inalámbrico 5 en 1",
+      "category": "Limpieza del hogar",
+      "salePriceCop": 79900,
+      "cardDescription": "Facilita la limpieza de baños y otras superficies del hogar con un cepillo giratorio recargable por USB. Incluye tres cepillos, un gancho y una pasta, según la ficha del proveedor.",
+      "description": [
+        "Haz más práctica la limpieza de distintas superficies con este cepillo eléctrico giratorio inalámbrico. Su mango ergonómico permite sujetarlo cómodamente y se recarga por USB.",
+        "La ficha del proveedor indica resistencia al agua IPX6 e incluye tres cepillos, un gancho y una pasta. Puede utilizarse en baños, bañeras, fregaderos, vidrio, azulejos y otras superficies. Para manchas difíciles, el proveedor recomienda usar detergente. El cabezal se retira para limpiarlo por separado."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "img/cepillo/cl1.jpg",
+          "alt": "Cepillo eléctrico giratorio inalámbrico con accesorios, vista 1"
+        },
+        {
+          "src": "img/cepillo/cl2.jpg",
+          "alt": "Cepillo giratorio con alimentación USB y cabezales intercambiables, vista 2"
+        },
+        {
+          "src": "img/cepillo/cl3.jpg",
+          "alt": "Cepillo giratorio utilizado en una superficie, vista 3"
+        },
+        {
+          "src": "img/cepillo/cl4.jpg",
+          "alt": "Ilustración del cepillo de limpieza, vista 4"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "Cepillo de Limpieza Inalámbrico 5 en 1 | Casa Clara",
+        "description": "Cepillo de limpieza inalámbrico 5 en 1, recargable por USB, con accesorios para limpiar distintas superficies del hogar. $79.900 COP."
+      }
+    },
+    {
+      "id": "parlante-som023",
+      "dropiId": "2241912",
+      "slug": "parlante-som023",
+      "status": "published",
+      "name": "Parlante portátil Som023",
+      "category": "Tecnología",
+      "salePriceCop": 79900,
+      "cardDescription": "Parlante portátil de diseño esférico con conectividad Bluetooth e iluminación LED.",
+      "description": [
+        "Disfruta de tu música con el parlante portátil Som023. Su diseño esférico incorpora iluminación LED y conectividad Bluetooth, para acompañarte con un formato compacto y práctico."
+      ],
+      "features": [
+        {
+          "label": "Conectividad",
+          "value": "Bluetooth."
+        },
+        {
+          "label": "Batería",
+          "value": "Recargable."
+        },
+        {
+          "label": "Iluminación",
+          "value": "Luces LED inferiores."
+        },
+        {
+          "label": "Controles",
+          "value": "Botones de reproducción integrados en la malla frontal."
+        },
+        {
+          "label": "Asa",
+          "value": "De tela integrada en los modelos frontales que la incluyen."
+        }
+      ],
+      "notices": [
+        "Los colores y su disponibilidad deben confirmarse con el proveedor."
+      ],
+      "images": [
+        {
+          "src": "img/parlanteSom/ps1.jpeg",
+          "alt": "Parlante portátil Som023 en varios colores, vista 1"
+        },
+        {
+          "src": "img/parlanteSom/ps2.webp",
+          "alt": "Parlante portátil Som023 en varios colores, vista 2"
+        }
+      ],
+      "variants": [
+        {
+          "name": "Rojo",
+          "variantId": "2333640",
+          "swatch": "#c9433b"
+        },
+        {
+          "name": "Negro",
+          "variantId": "2333641",
+          "swatch": "#282828"
+        },
+        {
+          "name": "Blanco",
+          "variantId": "2333642",
+          "swatch": "#ffffff"
+        },
+        {
+          "name": "Azul",
+          "variantId": "2333643",
+          "swatch": "#315f9b"
+        }
+      ],
+      "seo": {
+        "title": "Parlante portátil Som023 | Casa Clara",
+        "description": "Parlante portátil Som023 con Bluetooth, batería recargable e iluminación LED. Consulta los colores y disponibilidad por WhatsApp. $79.900 COP."
+      }
+    },
+    {
+      "id": "panel-luz-led-lamp-06",
+      "dropiId": "2146043",
+      "slug": "panel-luz-led-lamp-06",
+      "status": "published",
+      "name": "Panel de Luz LED LAMP-06 (10W) con Filtros de Color",
+      "category": "Tecnología · Iluminación",
+      "salePriceCop": 74900,
+      "cardDescription": "Panel LED de 10W para fotografía y vídeo, con luz blanca y filtros intercambiables para crear distintos ambientes de color.",
+      "description": [
+        "Dale un toque creativo a tus fotografías, vídeos y transmisiones en vivo con este panel de iluminación LED de 10W. Su luz blanca y sus filtros intercambiables te permiten experimentar con diferentes ambientes y efectos de color."
+      ],
+      "features": [
+        {
+          "label": "Potencia",
+          "value": "10W."
+        },
+        {
+          "label": "Temperatura de color indicada",
+          "value": "3200–5500 K."
+        },
+        {
+          "label": "Filtros",
+          "value": "Cuatro filtros de acetato: azul, rojo, verde y amarillo."
+        },
+        {
+          "label": "Incluye",
+          "value": "Panel transparente."
+        },
+        {
+          "label": "Montaje",
+          "value": "Rosca estándar de 1/4\" para trípodes y soportes compatibles."
+        },
+        {
+          "label": "Alimentación",
+          "value": "USB."
+        },
+        {
+          "label": "Controlador",
+          "value": "En el cable para encendido, apagado, ajuste de brillo y control de modo."
+        }
+      ],
+      "notices": [
+        "No incluye trípode ni soporte de montaje.",
+        "Las imágenes son de referencia. El producto real puede presentar ligeras variaciones de diseño y tonalidad."
+      ],
+      "images": [
+        {
+          "src": "img/LPLLL/LPL1.jpg",
+          "alt": "Panel de luz LED LAMP-06 con filtros de color, vista 1"
+        },
+        {
+          "src": "img/LPLLL/LPL2.jpg",
+          "alt": "Panel de luz LED LAMP-06 con filtros intercambiables, vista 2"
+        },
+        {
+          "src": "img/LPLLL/LPL3.jpg",
+          "alt": "Panel LED LAMP-06 y ejemplos de uso con filtros, vista 3"
+        },
+        {
+          "src": "img/LPLLL/LPL4.jpg",
+          "alt": "Panel de luz LED LAMP-06 y controlador USB, vista 4"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "Panel de Luz LED LAMP-06 (10W) con Filtros de Color | Casa Clara",
+        "description": "Panel de luz LED LAMP-06 de 10W para fotografía y vídeo, con filtros de color intercambiables y alimentación USB. $74.900 COP."
+      }
+    },
+    {
+      "id": "dropi-2019472",
+      "dropiId": "2019472",
+      "slug": "organizador-de-zapatos-multiestante-x7nv-2019472",
+      "status": "draft",
+      "name": "ORGANIZADOR DE ZAPATOS MULTIESTANTE X7nv",
+      "category": "Hogar",
+      "cardDescription": "Organiza tus zapatos aprovechando mejor el espacio vertical. Su diseño de varios niveles ayuda a mantener el calzado ordenado y a la vista.",
+      "description": [
+        "Organiza tus zapatos aprovechando mejor el espacio vertical. Su diseño de varios niveles ayuda a mantener el calzado ordenado y a la vista."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "https://d39ru7awumhhs2.cloudfront.net/colombia/products/2019472/17653875371723569383GIF%202%20ESTRUCT%20NIVELES%20WEBP.webp",
+          "alt": "Imagen de ORGANIZADOR DE ZAPATOS MULTIESTANTE X7nv",
+          "previewSrc": "img/dropi-preview/dropi-2019472.webp"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "ORGANIZADOR DE ZAPATOS MULTIESTANTE X7nv | Casa Clara (borrador)",
+        "description": "Ficha en preparación para ORGANIZADOR DE ZAPATOS MULTIESTANTE X7nv."
+      },
+      "proposalStatus": "propuesto",
+      "proposedSalePriceCop": 73900,
+      "draftMeasures": "65 × 24 × 26 cm",
+      "draftFeatures": [
+        "Incluye 5 bases y 12 laterales",
+        "Fabricado en Colombia",
+        "Garantía de 3 meses por defectos de fábrica"
+      ],
+      "draftPackageContents": "5 bases y 12 laterales"
+    },
+    {
+      "id": "dropi-1829387",
+      "dropiId": "1829387",
+      "slug": "zapatero-organizador-plegable-6-niveles-1829387",
+      "status": "draft",
+      "name": "Zapatero Organizador Plegable 6 Niveles",
+      "category": "Hogar · Natural Home · Otro",
+      "cardDescription": "Una solución práctica para mantener el calzado organizado. Su estructura plegable facilita guardarlo cuando necesitas liberar espacio y su montaje es sencillo, sin herramientas.",
+      "description": [
+        "Una solución práctica para mantener el calzado organizado. Su estructura plegable facilita guardarlo cuando necesitas liberar espacio y su montaje es sencillo, sin herramientas."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "https://d39ru7awumhhs2.cloudfront.net/colombia/products/1829387/1754773527ChatGPT%20Image%209%20ago%202025,%2015_55_44.png",
+          "alt": "Imagen de Zapatero Organizador Plegable 6 Niveles",
+          "previewSrc": "img/dropi-preview/dropi-1829387.png"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "Zapatero Organizador Plegable 6 Niveles | Casa Clara (borrador)",
+        "description": "Ficha en preparación para Zapatero Organizador Plegable 6 Niveles."
+      },
+      "proposalStatus": "pendiente_variante",
+      "proposedSalePriceCop": null,
+      "draftMeasures": "Armado: aprox. 105 × 26 × 34 cm. Plegado: aprox. 18 × 26 × 34 cm.",
+      "draftFeatures": [
+        "6 niveles",
+        "Disponible en blanco y negro",
+        "Montaje sin herramientas",
+        "Garantía de 30 días por defectos de fábrica"
+      ],
+      "draftPackageContents": null,
+      "draftVariants": {
+        "label": "Color",
+        "options": [
+          "Blanco",
+          "Negro"
+        ]
+      },
+      "draftOffers": [
+        {
+          "name": "Blanco",
+          "priceCop": 109900
+        },
+        {
+          "name": "Negro",
+          "priceCop": 111000
+        }
+      ]
+    },
+    {
+      "id": "dropi-805983",
+      "dropiId": "805983",
+      "slug": "dispensador-de-huevos-organizador-x4-uni-805983",
+      "status": "draft",
+      "name": "DISPENSADOR DE HUEVOS ORGANIZADOR X4 UNI",
+      "category": "Hogar",
+      "cardDescription": "Mantén los huevos organizados dentro del refrigerador con este set de cuatro organizadores. Cada unidad tiene capacidad aproximada para 12 a 14 huevos, según su tamaño.",
+      "description": [
+        "Mantén los huevos organizados dentro del refrigerador con este set de cuatro organizadores. Cada unidad tiene capacidad aproximada para 12 a 14 huevos, según su tamaño."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "https://d39ru7awumhhs2.cloudfront.net/colombia/products/805983/1754776901ChatGPT%20Image%209%20ago%202025,%2016_56_19.png",
+          "alt": "Imagen de DISPENSADOR DE HUEVOS ORGANIZADOR X4 UNI",
+          "previewSrc": "img/dropi-preview/dropi-805983.png"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "DISPENSADOR DE HUEVOS ORGANIZADOR X4 UNI | Casa Clara (borrador)",
+        "description": "Ficha en preparación para DISPENSADOR DE HUEVOS ORGANIZADOR X4 UNI."
+      },
+      "proposalStatus": "propuesto",
+      "proposedSalePriceCop": 71900,
+      "draftMeasures": null,
+      "draftFeatures": [
+        "Incluye 4 organizadores",
+        "Tono beige o crema",
+        "Fabricado en Colombia",
+        "Garantía de 1 mes por defectos de fábrica"
+      ],
+      "draftPackageContents": "4 organizadores de huevos"
+    },
+    {
+      "id": "dropi-2214563",
+      "dropiId": "2214563",
+      "slug": "mesa-de-noche-inteligente-premium-2214563",
+      "status": "draft",
+      "name": "MESA DE NOCHE INTELIGENTE PREMIUM",
+      "category": "Bisutería · Moda · Tecnologia · Hogar · Otro",
+      "cardDescription": "Una mesa de noche multifuncional que combina almacenamiento y funciones tecnológicas para acompañar tu rutina diaria.",
+      "description": [
+        "Una mesa de noche multifuncional que combina almacenamiento y funciones tecnológicas para acompañar tu rutina diaria."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "https://d39ru7awumhhs2.cloudfront.net/colombia/products/2214563/1785258618WhatsApp%20Image%202026-07-28%20at%2011.58.46%20AM%20(2).jpeg",
+          "alt": "Imagen de MESA DE NOCHE INTELIGENTE PREMIUM",
+          "previewSrc": "img/dropi-preview/dropi-2214563.jpg"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "MESA DE NOCHE INTELIGENTE PREMIUM | Casa Clara (borrador)",
+        "description": "Ficha en preparación para MESA DE NOCHE INTELIGENTE PREMIUM."
+      },
+      "proposalStatus": "propuesto",
+      "proposedSalePriceCop": 394900,
+      "draftMeasures": "45 cm de ancho × 60 cm de profundidad × 60 cm de alto",
+      "draftFeatures": [
+        "Cargador inalámbrico Qi",
+        "Parlante Bluetooth",
+        "Luz LED con sensor de movimiento",
+        "Cajón con apertura por huella",
+        "Dos cajones",
+        "Superficie de vidrio templado",
+        "Puerto USB",
+        "Tres colores de iluminación LED",
+        "Color gris",
+        "Requiere conexión eléctrica",
+        "Garantía de 10 días por defectos de fábrica"
+      ],
+      "draftPackageContents": "Mesa de noche, cable de alimentación y manual"
+    },
+    {
+      "id": "dropi-2272811",
+      "dropiId": "2272811",
+      "slug": "combo-closet-3-cuerpos-aspiradora-robot-2272811",
+      "status": "draft",
+      "name": "COMBO CLOSET 3 CUERPOS+ASPIRADORA ROBOT",
+      "category": "Hogar",
+      "cardDescription": "Un combo práctico para apoyar la organización del hogar y la limpieza diaria. Incluye un clóset de tela para guardar ropa y accesorios, y una aspiradora robot multifunción.",
+      "description": [
+        "Un combo práctico para apoyar la organización del hogar y la limpieza diaria. Incluye un clóset de tela para guardar ropa y accesorios, y una aspiradora robot multifunción."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "https://d39ru7awumhhs2.cloudfront.net/colombia/products/2272811/070b81a5-8c3a-433a-9e71-327a333d8b79.jpeg",
+          "alt": "Imagen de COMBO CLOSET 3 CUERPOS+ASPIRADORA ROBOT",
+          "previewSrc": "img/dropi-preview/dropi-2272811.jpg"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "COMBO CLOSET 3 CUERPOS+ASPIRADORA ROBOT | Casa Clara (borrador)",
+        "description": "Ficha en preparación para COMBO CLOSET 3 CUERPOS+ASPIRADORA ROBOT."
+      },
+      "proposalStatus": "propuesto",
+      "proposedSalePriceCop": 120900,
+      "draftMeasures": null,
+      "draftFeatures": [
+        "Clóset con compartimentos y espacios para colgar",
+        "Aspiradora robot 3 en 1: barre, aspira y trapea"
+      ],
+      "draftPackageContents": "Clóset de tela y aspiradora robot"
+    },
+    {
+      "id": "dropi-1597075",
+      "dropiId": "1597075",
+      "slug": "organizador-de-zapatos-y-ropa-ruedas-1597075",
+      "status": "draft",
+      "name": "ORGANIZADOR DE ZAPATOS Y ROPA RUEDAS",
+      "category": "Hogar",
+      "cardDescription": "Aprovecha mejor el espacio de tu habitación o vestidor con un organizador versátil para guardar zapatos y prendas.",
+      "description": [
+        "Aprovecha mejor el espacio de tu habitación o vestidor con un organizador versátil para guardar zapatos y prendas."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "https://d39ru7awumhhs2.cloudfront.net/colombia/products/1597075/1734714349ORGANIZADOR%20DE%20ZAPATOS.PNG",
+          "alt": "Imagen de ORGANIZADOR DE ZAPATOS Y ROPA RUEDAS",
+          "previewSrc": "img/dropi-preview/dropi-1597075.png"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "ORGANIZADOR DE ZAPATOS Y ROPA RUEDAS | Casa Clara (borrador)",
+        "description": "Ficha en preparación para ORGANIZADOR DE ZAPATOS Y ROPA RUEDAS."
+      },
+      "proposalStatus": "propuesto",
+      "proposedSalePriceCop": 91900,
+      "draftMeasures": null,
+      "draftFeatures": [
+        "Varios compartimentos",
+        "Con ruedas",
+        "Materiales de fácil mantenimiento"
+      ],
+      "draftPackageContents": null
+    },
+    {
+      "id": "dropi-2190029",
+      "dropiId": "2190029",
+      "slug": "cesto-ropa-sucia-3-compartimentos-2190029",
+      "status": "draft",
+      "name": "CESTO ROPA SUCIA 3 COMPARTIMENTOS",
+      "category": "Hogar · Aseo · Otro",
+      "cardDescription": "Separa la ropa antes de lavarla con este cesto de tres compartimentos. Su diseño permite clasificar prendas y retirar las bolsas de tela para facilitar el traslado.",
+      "description": [
+        "Separa la ropa antes de lavarla con este cesto de tres compartimentos. Su diseño permite clasificar prendas y retirar las bolsas de tela para facilitar el traslado."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "https://d39ru7awumhhs2.cloudfront.net/colombia/products/2190029/1782923593D_NQ_NP_2X_867941-MLA99479473352_112025-F.webp",
+          "alt": "Imagen de CESTO ROPA SUCIA 3 COMPARTIMENTOS",
+          "previewSrc": "img/dropi-preview/dropi-2190029.webp"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "CESTO ROPA SUCIA 3 COMPARTIMENTOS | Casa Clara (borrador)",
+        "description": "Ficha en preparación para CESTO ROPA SUCIA 3 COMPARTIMENTOS."
+      },
+      "proposalStatus": "propuesto",
+      "proposedSalePriceCop": 75900,
+      "draftMeasures": null,
+      "draftFeatures": [
+        "Tres compartimentos",
+        "Bolsas de tela removibles",
+        "Estructura de soporte metálica",
+        "Tela Oxford",
+        "Diseño desmontable"
+      ],
+      "draftPackageContents": "Cesto, estructura de soporte y accesorios de montaje"
+    },
+    {
+      "id": "dropi-2073846",
+      "dropiId": "2073846",
+      "slug": "protector-termosellado-premiun-2073846",
+      "status": "draft",
+      "name": "Protector Termosellado Premiun",
+      "category": "Hogar",
+      "cardDescription": "Protege el colchón de salpicaduras y manchas cotidianas con un protector acolchado, suave y lavable. Su banda elástica ayuda a mantenerlo ajustado al colchón.",
+      "description": [
+        "Protege el colchón de salpicaduras y manchas cotidianas con un protector acolchado, suave y lavable. Su banda elástica ayuda a mantenerlo ajustado al colchón."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "https://d39ru7awumhhs2.cloudfront.net/colombia/products/2073846/9d7cd361-550f-4e22-895b-e037fbdba039.webp",
+          "alt": "Imagen de Protector Termosellado Premiun",
+          "previewSrc": "img/dropi-preview/dropi-2073846.webp"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "Protector Termosellado Premiun | Casa Clara (borrador)",
+        "description": "Ficha en preparación para Protector Termosellado Premiun."
+      },
+      "proposalStatus": "pendiente_variante",
+      "proposedSalePriceCop": null,
+      "draftMeasures": "Sencillo: 100 × 190 cm; semidoble: 120 × 190 cm; doble: 140 × 190 cm; queen: 160 × 190 cm; king: 200 × 200 cm. Banda lateral aprox. de 35–40 cm.",
+      "draftFeatures": [
+        "Microfibra de poliéster",
+        "Acolchado",
+        "Tres capas unidas por termosellado",
+        "Elástico alrededor",
+        "Lavable y de secado rápido"
+      ],
+      "draftPackageContents": null,
+      "draftVariants": {
+        "label": "Tamaño",
+        "options": [
+          "Sencillo — 100 × 190 cm",
+          "Semidoble — 120 × 190 cm",
+          "Doble — 140 × 190 cm",
+          "Queen — 160 × 190 cm",
+          "King — 200 × 200 cm"
+        ]
+      },
+      "draftStartingPriceCop": 64900,
+      "draftOffers": [
+        {
+          "name": "Sencillo — 100 × 190 cm",
+          "priceText": "Desde $64.900 COP"
+        },
+        {
+          "name": "Semidoble — 120 × 190 cm",
+          "priceText": "Desde $64.900 COP"
+        },
+        {
+          "name": "Doble — 140 × 190 cm",
+          "priceText": "Desde $64.900 COP"
+        },
+        {
+          "name": "Queen — 160 × 190 cm",
+          "priceText": "Desde $64.900 COP"
+        },
+        {
+          "name": "King — 200 × 200 cm",
+          "priceText": "Desde $64.900 COP"
+        }
+      ]
+    },
+    {
+      "id": "dropi-2265163",
+      "dropiId": "2265163",
+      "slug": "secadora-de-ropa-portatil-plegable-elect-2265163",
+      "status": "draft",
+      "name": "Secadora de Ropa Portátil Plegable Eléct",
+      "category": "Hogar",
+      "cardDescription": "Una alternativa compacta para ayudar a secar la ropa con aire caliente. Su estructura plegable facilita guardarla cuando no está en uso.",
+      "description": [
+        "Una alternativa compacta para ayudar a secar la ropa con aire caliente. Su estructura plegable facilita guardarla cuando no está en uso."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "https://d39ru7awumhhs2.cloudfront.net/colombia/products/2265163/bba92d9e-deab-4445-8c88-021153f770f0.jpeg",
+          "alt": "Imagen de Secadora de Ropa Portátil Plegable Eléct",
+          "previewSrc": "img/dropi-preview/dropi-2265163.jpg"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "Secadora de Ropa Portátil Plegable Eléct | Casa Clara (borrador)",
+        "description": "Ficha en preparación para Secadora de Ropa Portátil Plegable Eléct."
+      },
+      "proposalStatus": "propuesto",
+      "proposedSalePriceCop": 83900,
+      "draftMeasures": "Aprox. 50 cm de alto × 41 cm de ancho × 17 cm de fondo en formato compacto",
+      "draftFeatures": [
+        "Capacidad indicada por el proveedor: hasta 10 kg",
+        "Temporizador",
+        "Circulación de aire caliente",
+        "Diseño plegable"
+      ],
+      "draftPackageContents": "Secadora, soporte para prendas, adaptador de corriente y accesorios según presentación"
+    },
+    {
+      "id": "dropi-1906551",
+      "dropiId": "1906551",
+      "slug": "organizador-beige-cafe-x3-prodehogar-1906551",
+      "status": "draft",
+      "name": "Organizador beige-cafe x3 Prodehogar",
+      "category": "Hogar",
+      "cardDescription": "Añade almacenamiento práctico a distintos espacios con este organizador de tres niveles y acabado tipo ratán.",
+      "description": [
+        "Añade almacenamiento práctico a distintos espacios con este organizador de tres niveles y acabado tipo ratán."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "https://d39ru7awumhhs2.cloudfront.net/colombia/products/1906551/1756134863gabeta_beige_cafe_zoom.jpg",
+          "alt": "Imagen de Organizador beige-cafe x3 Prodehogar",
+          "previewSrc": "img/dropi-preview/dropi-1906551.jpg"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "Organizador beige-cafe x3 Prodehogar | Casa Clara (borrador)",
+        "description": "Ficha en preparación para Organizador beige-cafe x3 Prodehogar."
+      },
+      "proposalStatus": "propuesto",
+      "proposedSalePriceCop": 225900,
+      "draftMeasures": null,
+      "draftFeatures": [
+        "Tres niveles o cajones",
+        "Acabado tipo ratán",
+        "Color beige-café",
+        "Plástico ligero y fácil de limpiar",
+        "Diseño ventilado"
+      ],
+      "draftPackageContents": null
+    },
+    {
+      "id": "dropi-1879308",
+      "dropiId": "1879308",
+      "slug": "lampara-led-de-escritorio-plegable-1879308",
+      "status": "draft",
+      "name": "Lámpara LED de Escritorio Plegable",
+      "category": "HOGAR · Tecnología",
+      "cardDescription": "Ilumina tu espacio de estudio o trabajo con una lámpara LED plegable y ajustable, fácil de mover y guardar.",
+      "description": [
+        "Ilumina tu espacio de estudio o trabajo con una lámpara LED plegable y ajustable, fácil de mover y guardar."
+      ],
+      "features": [],
+      "notices": [],
+      "images": [
+        {
+          "src": "https://d39ru7awumhhs2.cloudfront.net/colombia/products/1879308/1752861425ssstik.io__ma1_lyyn_1752780193668.gif",
+          "alt": "Imagen de Lámpara LED de Escritorio Plegable",
+          "previewSrc": "img/dropi-preview/dropi-1879308.gif"
+        }
+      ],
+      "variants": [],
+      "seo": {
+        "title": "Lámpara LED de Escritorio Plegable | Casa Clara (borrador)",
+        "description": "Ficha en preparación para Lámpara LED de Escritorio Plegable."
+      },
+      "proposalStatus": "propuesto",
+      "proposedSalePriceCop": 69900,
+      "draftMeasures": "Altura extendida aprox. 35 cm; base de 12 × 12 cm; brazo aprox. 25–30 cm; peso aprox. 500 g",
+      "draftFeatures": [
+        "Iluminación LED de bajo consumo",
+        "Brazo ajustable",
+        "Varios niveles de intensidad según proveedor",
+        "Diseño plegable y portátil"
+      ],
+      "draftPackageContents": null
+    }
+  ]
+}

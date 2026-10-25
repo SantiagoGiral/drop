@@ -56,6 +56,7 @@ for (const p of published) {
   assert.ok(page.includes(`data-whatsapp-product="${p.name}"`), `WhatsApp identifica ${p.name}`);
   assert.ok(page.includes(new Intl.NumberFormat('es-CO').format(p.salePriceCop)), `la ficha publica el precio correcto de ${p.name}`);
   assert.ok(page.includes(`data-whatsapp-price="$${new Intl.NumberFormat('es-CO').format(p.salePriceCop)} COP"`), `WhatsApp usa el precio correcto de ${p.name}`);
+  assert.ok(page.includes('"@type":"Product"') && page.includes('"@type":"Offer"'), `${p.name} tiene Schema.org Product/Offer`);
 }
 for (const p of drafts) {
   assert.equal(Object.hasOwn(p, 'salePriceCop'), false, `${p.dropiId} no tiene precio de venta final`);
@@ -71,16 +72,38 @@ for (const p of drafts) {
 }
 assert.ok(!JSON.stringify(data).includes('internal_note'), 'el catalogo no incluye notas internas de Dropi');
 assert.ok(!data.products.some((p) => p.dropiId === '2118677'), '2118677 no aparece en el catálogo visible ni de borradores');
-const publicFiles = ['index.html','sitemap.xml', ...published.map((p) => `productos/${p.slug}.html`)];
+const publicFiles = ['index.html','sitemap.xml', ...data.products.map((p) => `productos/${p.slug}.html`)];
 for (const filename of publicFiles) {
   const content = fs.readFileSync(path.join(root, filename), 'utf8');
   assert.ok(!/(supplierCost|providerCost|shippingCost|commissionRate|fixedFee|targetProfit|costo del proveedor|flete estimado|comisión porcentual)/i.test(content), `sin datos/campos de calculadora en ${filename}`);
 }
+const seoTitles = [];
+for (const product of data.products) {
+  const page = fs.readFileSync(path.join(root, `productos/${product.slug}.html`), 'utf8');
+  const title = page.match(/<title>([^<]+)<\/title>/)?.[1];
+  assert.ok(title, `${product.dropiId} tiene título SEO`);
+  seoTitles.push(title);
+  assert.equal((page.match(/<h1\b/g) || []).length, 1, `${product.dropiId} tiene un H1`);
+  assert.match(page, /<link rel="canonical" href="https:\/\/casaclara\.com\.co\/productos\//, `${product.dropiId} tiene canonical absoluta`);
+}
+assert.equal(new Set(seoTitles).size, seoTitles.length, 'no hay títulos SEO duplicados');
+for (const filename of ['index.html', ...data.products.map((p) => `productos/${p.slug}.html`)]) {
+  const html = fs.readFileSync(path.join(root, filename), 'utf8');
+  for (const match of html.matchAll(/<(?:img|source)\b[^>]*>/g)) assert.match(match[0], /\balt="[^"]*"/, `${filename}: cada imagen tiene alt`);
+  for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
+    const ref = match[1];
+    if (/^(?:#|https?:|mailto:|tel:|data:|javascript:)/i.test(ref)) continue;
+    const cleanRef = decodeURIComponent(ref.split(/[?#]/, 1)[0]);
+    const target = path.resolve(root, path.dirname(filename), cleanRef);
+    assert.ok(fs.existsSync(target), `${filename} apunta a una ruta local existente: ${ref}`);
+  }
+}
 const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
 const homepage = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+assert.equal((sitemap.match(/<loc>/g) || []).length, 18, 'sitemap incluye portada y 17 fichas enlazadas');
 assert.equal((homepage.match(/class="catalog-card(?: preview-card)?"/g) || []).length, 17, 'portada muestra seis publicados y once borradores');
 assert.equal((homepage.match(/data-catalog-filter=/g) || []).length, 6, 'portada ofrece filtro general y cinco categorias');
-assert.match(homepage, /hero-product[\s\S]*img\/imagenDrop1\.jpg/);
+assert.match(homepage, /hero-product[\s\S]*img\/(?:optimized\/)?imagenDrop1\.(?:jpg|webp)/);
 assert.equal((fs.readFileSync(path.join(root,'templates/index.html'),'utf8').match(/data-hero-title/g) || []).length, 1, 'el pie del carrusel no duplica el título');
 assert.equal((homepage.match(/data-hero-slide(?:\s|>)/g) || []).length, 17, 'carrusel destaca todos los productos');
 for (const control of ['data-hero-previous','data-hero-next','data-hero-toggle','data-hero-count']) assert.ok(homepage.includes(control), `carrusel incluye control ${control}`);
@@ -96,8 +119,23 @@ assert.ok(!/(horarios internos|generaci[oó]n de gu[ií]as|instrucciones log[ií
 for (const p of published) { const cardStart=homepage.indexOf(`data-product-id="${p.id}"`); const card=homepage.slice(cardStart,homepage.indexOf('</article>',cardStart)); assert.ok(card.includes(`data-whatsapp-product="${p.name}"`), `${p.dropiId} tiene boton de WhatsApp`); }
 for (const p of published) assert.ok(sitemap.includes(`/productos/${p.slug}.html`), `sitemap contiene ${p.slug}`);
 for (const p of drafts) {
-  assert.ok(!sitemap.includes(p.slug), `sitemap omite borrador ${p.dropiId}`);
+  assert.ok(sitemap.includes(`/productos/${p.slug}.html`), `sitemap incluye la ficha enlazada de ${p.dropiId}`);
   assert.ok(homepage.includes(`data-product-id="${p.id}"`), `portada muestra borrador ${p.dropiId}`);
+  const draftPage = fs.readFileSync(path.join(root, `productos/${p.slug}.html`), 'utf8');
+  assert.ok(draftPage.includes(`href="https://casaclara.com.co/productos/${p.slug}.html"`), `${p.dropiId} tiene canonical propia`);
+  assert.ok(draftPage.includes('"@type":"Product"') && draftPage.includes('"@type":"Offer"'), `${p.dropiId} tiene Schema.org Product/Offer`);
+  const schemaText = draftPage.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)?.[1];
+  const schema = JSON.parse(schemaText);
+  const expectedPrice = (p.draftOffers || []).map((offer) => offer.priceCop).filter(Number.isInteger).length
+    ? Math.max(...p.draftOffers.map((offer) => offer.priceCop).filter(Number.isInteger))
+    : p.draftStartingPriceCop || p.proposedSalePriceCop;
+  assert.equal(schema.offers.price, String(expectedPrice), `${p.dropiId} estructura el precio mostrado`);
+  assert.equal(schema.offers.priceCurrency, 'COP', `${p.dropiId} usa moneda COP`);
+  assert.ok(!Object.hasOwn(schema.offers, 'availability'), `${p.dropiId} no inventa disponibilidad`);
+  assert.match(draftPage, /width="\d+" height="\d+"/, `${p.dropiId} declara dimensiones de imagen`);
+  assert.ok(draftPage.includes(`data-whatsapp-product="${p.name}"`), `${p.dropiId} tiene CTA WhatsApp en su ficha`);
+  assert.ok(draftPage.includes('href="../index.html#productos"'), `${p.dropiId} puede volver al catálogo`);
+  assert.ok(!draftPage.includes('(borrador)'), `${p.dropiId} tiene título SEO listo para la ficha`);
   if (p.proposalStatus === 'propuesto') assert.ok(homepage.includes(new Intl.NumberFormat('es-CO').format(p.proposedSalePriceCop)), 'proposed price appears');
   else if ((p.draftOffers || []).some((offer) => Number.isInteger(offer.priceCop))) assert.ok(homepage.includes(new Intl.NumberFormat('es-CO').format(Math.max(...p.draftOffers.map((offer) => offer.priceCop).filter(Number.isInteger)))), 'variant price uses the highest option');
   else if (p.draftStartingPriceCop) assert.ok(homepage.includes(`Desde $${new Intl.NumberFormat('es-CO').format(p.draftStartingPriceCop)}`), 'starting price is preserved');
@@ -115,7 +153,7 @@ for (const p of drafts) {
   }
   for (const offer of p.draftOffers || []) if (offer.priceText) assert.ok(homepage.includes(offer.priceText), `${p.dropiId} conserva el precio desde indicado`);
   const cardStart=homepage.indexOf(`data-product-id="${p.id}"`); const cardEnd=homepage.indexOf('</article>',cardStart); const card=homepage.slice(cardStart,cardEnd); assert.ok(card.includes(`data-whatsapp-product="${p.name}"`), `${p.dropiId} tiene consulta por WhatsApp`); assert.ok(card.includes('Pedir por WhatsApp'), `${p.dropiId} muestra boton de pedido`); assert.ok(card.includes('data-whatsapp-note='), `${p.dropiId} tiene aviso de WhatsApp`);
-  assert.ok(!fs.existsSync(path.join(root, `productos/${p.slug}.html`)), `no se genera ficha sin precio final para ${p.dropiId}`);
+  assert.ok(card.includes(`href="productos/${p.slug}.html"`) && card.includes('>Ver detalles'), `${p.dropiId} abre su ficha desde la tarjeta`);
 }
 assert.ok(!sitemap.includes('set-utensilios'), 'set no agregado');
 const gridCss = fs.readFileSync(path.join(root, 'css/styles.css'), 'utf8');
@@ -128,7 +166,7 @@ assert.ok(!/costo_dropi_cop|precio_base_provisional_cop|dropi-preview\.js|Propue
 assert.ok(!fs.readFileSync(path.join(root,'scripts/serve-local.js'),'utf8').includes("html.replace('</head>'"), 'el servidor no vuelve a inyectar tarjetas duplicadas');
 const outputsA = buildOutputs(root), outputsB = buildOutputs(root);
 assert.deepEqual([...outputsA], [...outputsB], 'dos generaciones producen exactamente las mismas salidas');
-assert.equal([...outputsA.keys()].length, 8, 'solo gestiona portada, seis fichas y sitemap');
+assert.equal([...outputsA.keys()].length, 19, 'el generador gestiona portada, 17 fichas y sitemap');
 
 // Prueba de flujo automático de filas con 4 y 5 fichas (sin alterar el proyecto real).
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'casa-clara-grid-'));

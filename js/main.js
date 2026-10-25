@@ -163,7 +163,7 @@
             return;
           }
           const selectedPrice = option.dataset.priceText || price;
-          const message = `Hola, quiero consultar y hacer un pedido de ${product}. Variante seleccionada: ${option.value}. Precio sugerido: ${selectedPrice}.`;
+          const message = `Hola, quiero consultar y hacer un pedido de ${product}. Variante seleccionada: ${option.value}. Precio: ${selectedPrice}.`;
           button.href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
           button.textContent = `Pedir ${option.value} por WhatsApp`;
           button.setAttribute("aria-label", `Consultar y pedir ${product}, variante ${option.value}, por WhatsApp`);

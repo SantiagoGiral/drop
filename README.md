@@ -1,6 +1,6 @@
 # Casa Clara
 
-Tienda estática hecha con HTML, CSS y JavaScript, sin backend, base de datos, pasarela de pago, dependencias ni servicios pagos. La portada conserva 17 tarjetas: los seis productos originales y los 11 productos Dropi añadidos. Las fichas independientes y el sitemap siguen incluyendo solo los seis productos originales. El set de utensilios continúa fuera del catálogo.
+Tienda estática hecha con HTML, CSS y JavaScript, sin backend, base de datos, pasarela de pago, dependencias ni servicios pagos. La portada y el sitemap incluyen 17 productos: los seis productos originales y los 11 productos Dropi añadidos. Cada tarjeta tiene una ficha independiente. El set de utensilios continúa fuera del catálogo.
 
 ## Abrir y probar localmente
 
@@ -29,10 +29,10 @@ Desde la carpeta `Drop`, ejecuta `node scripts/build-catalog.js`. Puedes ejecuta
 ### Archivos generados automáticamente
 
 - `index.html` (portada y tarjetas).
-- `productos/<slug>.html` para cada producto con estado `published` en el JSON.
-- `sitemap.xml` (solo portada y fichas publicadas).
+- `productos/<slug>.html` para cada producto con estado `published` o `draft` y un precio mostrado.
+- `sitemap.xml` (portada y fichas generadas).
 
-No edites manualmente esos tres tipos de salida: los archivos llevan un comentario marcador y el generador los administra. Las ediciones manuales deben hacerse en las plantillas o `catalog/products.json`. Si un producto deja de publicarse, el generador lo quita del catálogo y sitemap, pero no borra su antigua ficha; revísala y archívala manualmente si corresponde.
+No edites manualmente esos tres tipos de salida: los archivos llevan un comentario marcador y el generador los administra. Las ediciones manuales deben hacerse en las plantillas o `catalog/products.json`. Si un producto se elimina del catálogo, el generador no borra su antigua ficha; revísala y archívala manualmente si corresponde.
 
 ## WhatsApp y pedidos
 
@@ -40,7 +40,7 @@ El número está en `js/config.js`, en formato internacional y solo dígitos. El
 
 ## Privacidad y publicación
 
-No se incluyeron costos internos en el catálogo público. Las páginas de administración y vista previa se retiraron del proyecto. La portada muestra los 17 productos y sus botones de consulta; el sitemap y las páginas de detalle conservan únicamente los seis productos originales.
+No se incluyeron costos internos en el catálogo público. Las páginas y herramientas de administración se retiraron. La portada y el sitemap muestran los 17 productos con sus fichas y botones de consulta.
 
 ## Importación de borradores Dropi
 
@@ -51,7 +51,7 @@ Para integrar descripciones recibidas en JSON sin tocar los seis productos publi
 
 El importador actualiza únicamente campos descriptivos de borradores Dropi ya existentes, omite el ID 2118677 y no copia notas internas. Los precios, imágenes, estados, fichas publicadas y sitemap se conservan.
 
-`catalog/products.json` conserva los seis productos publicados y los 11 productos Dropi como borradores de origen. La portada muestra las 17 tarjetas con botones de consulta por WhatsApp; el mensaje se revisa y se envía manualmente y no crea pedidos automáticamente. Para el zapatero se muestra el precio más alto entre sus colores. El protector conserva el precio indicado "desde". Ningún costo Dropi se muestra en el sitio. Los borradores no tienen fichas individuales ni aparecen en el sitemap.
+`catalog/products.json` conserva los seis productos originales y los 11 productos Dropi con estado de borrador en la fuente. Los 17 se muestran en la portada, tienen ficha y botón de consulta por WhatsApp; el mensaje se revisa y envía manualmente y no crea pedidos automáticamente. El zapatero muestra $111.000 para ambos colores. El protector conserva el precio indicado "desde". Ningún costo Dropi se muestra en el sitio. Las fichas usan `Product` y `Offer` sin disponibilidad inventada.
 
 Para importar desde otro archivo fuente, ejecuta desde Drop:
 
@@ -63,7 +63,9 @@ Pendientes internos de esta consulta: 1829387 requiere revisar el stock reportad
 
 ### Imágenes de Dropi
 
-Los 11 archivos de imagen descargados están en `img/dropi-preview/`. `scripts/download-dropi-images.js` valida sus firmas y tipos; la fuente original queda en `images[].src`. La portada los carga desde rutas locales. El sitemap mantiene solo la portada y las seis fichas originales.
+Los 11 archivos de imagen descargados están en `img/dropi-preview/`. `scripts/download-dropi-images.js` valida sus firmas y tipos; la fuente original queda en `images[].src`. Las fichas y tarjetas usan derivados WebP locales de menor peso cuando existen y conservan los originales. El GIF animado se sirve sin conversión para no perder sus fotogramas. Las imágenes locales declaran dimensiones para reducir saltos visuales.
+
+El proyecto todavía no contiene políticas confirmadas de envío, devoluciones, garantía o privacidad; no se publican textos inventados para cubrir esa ausencia.
 
 ## Propuestas de precio local
 

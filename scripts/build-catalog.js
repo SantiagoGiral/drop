@@ -12,6 +12,60 @@ const filterCategory = (product) => FILTER_CATEGORIES[String(product.dropiId)] |
 const esc = (value) => String(value).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const attr = (value) => esc(value);
 
+function getImageDimensions(src, root = ROOT) {
+  if (!src || /^https?:/i.test(src)) return null;
+  try {
+    const data = fs.readFileSync(path.resolve(root, src));
+    if (data.length >= 24 && data.toString('ascii', 1, 4) === 'PNG') return { width: data.readUInt32BE(16), height: data.readUInt32BE(20) };
+    if (data.length >= 10 && /^GIF8[79]a$/.test(data.toString('ascii', 0, 6))) return { width: data.readUInt16LE(6), height: data.readUInt16LE(8) };
+    if (data.length >= 30 && data.toString('ascii', 0, 4) === 'RIFF' && data.toString('ascii', 8, 12) === 'WEBP') {
+      const chunk = data.toString('ascii', 12, 16);
+      if (chunk === 'VP8X') return { width: 1 + data.readUIntLE(24, 3), height: 1 + data.readUIntLE(27, 3) };
+      if (chunk === 'VP8L' && data[20] === 0x2f) return { width: 1 + data[21] + ((data[22] & 0x3f) << 8), height: 1 + (data[22] >> 6) + (data[23] << 2) + ((data[24] & 0x0f) << 10) };
+      if (chunk === 'VP8 ') return { width: data.readUInt16LE(26) & 0x3fff, height: data.readUInt16LE(28) & 0x3fff };
+    }
+    if (data.length >= 4 && data[0] === 0xff && data[1] === 0xd8) {
+      let offset = 2;
+      while (offset + 9 < data.length) {
+        if (data[offset] !== 0xff) { offset++; continue; }
+        const marker = data[offset + 1];
+        const length = data.readUInt16BE(offset + 2);
+        if ([0xc0,0xc1,0xc2,0xc3,0xc5,0xc6,0xc7,0xc9,0xca,0xcb,0xcd,0xce,0xcf].includes(marker)) return { height: data.readUInt16BE(offset + 5), width: data.readUInt16BE(offset + 7) };
+        if (length < 2) break;
+        offset += 2 + length;
+      }
+    }
+  } catch {}
+  return null;
+}
+
+function imageDimensionAttrs(src, root = ROOT) {
+  const dimensions = getImageDimensions(src, root);
+  return dimensions?.width && dimensions?.height ? ` width="${dimensions.width}" height="${dimensions.height}"` : '';
+}
+
+function optimizedImageSrc(src, root = ROOT) {
+  if (!src || /^https?:/i.test(src)) return src;
+  const absolute = path.resolve(root, src);
+  const imageRoot = path.resolve(root, 'img');
+  if (!absolute.startsWith(imageRoot + path.sep)) return src;
+  const relative = path.relative(imageRoot, absolute);
+  const optimized = path.join('img', 'optimized', relative).replace(/\.[^.]+$/, '.webp').split(path.sep).join('/');
+  return fs.existsSync(path.resolve(root, optimized)) ? optimized : src;
+}
+
+function draftPrice(product) {
+  const variantPrices = (product.draftOffers || []).map((offer) => offer.priceCop).filter(Number.isInteger);
+  if (variantPrices.length) return { price: Math.max(...variantPrices), label: 'Precio' };
+  if (Number.isInteger(product.draftStartingPriceCop)) return { price: product.draftStartingPriceCop, label: 'Desde' };
+  if (Number.isInteger(product.proposedSalePriceCop)) return { price: product.proposedSalePriceCop, label: 'Precio' };
+  return null;
+}
+
+function publicImageUrl(src) {
+  return /^https?:/i.test(src) ? src : new URL(src.replace(/^\.\.\//, ''), 'https://casaclara.com.co/').href;
+}
+
 function validate(products) {
   if (!Array.isArray(products) || products.length === 0) throw new Error('catalog/products.json debe contener productos.');
   const ids = new Set(), slugs = new Set(), dropi = new Set();
@@ -54,8 +108,9 @@ function renderCard(p, validImages) {
   const image = validImages[0];
   if (p.status === 'draft') {
     const localImage = p.images.find((item) => item.previewSrc && fs.existsSync(path.resolve(ROOT, item.previewSrc)));
+    const draftImageSrc = localImage ? optimizedImageSrc(localImage.previewSrc) : '';
     const draftMedia = localImage
-      ? `<img src="${attr(localImage.previewSrc)}" alt="${attr(localImage.alt)}" loading="lazy" data-image-fallback>`
+      ? `<img src="${attr(draftImageSrc)}" alt="${attr(localImage.alt)}"${imageDimensionAttrs(draftImageSrc)} loading="lazy" data-image-fallback>`
       : `<div class="image-pending" role="img" aria-label="FotografÃ­a pendiente"><span class="pending-icon" aria-hidden="true">âŒ‚</span><span>FotografÃ­a pendiente</span></div>`;
     const variantSelectId = p.draftOffers?.length ? `draft-variant-${p.id}` : '';
     const exactPrices = (p.draftOffers || []).map((offer) => offer.priceCop).filter(Number.isInteger);
@@ -79,10 +134,11 @@ function renderCard(p, validImages) {
     const variants = !p.draftOffers?.length && p.draftVariants?.options?.length ? `<div class="draft-card-facts"><h4>Opciones indicadas: ${esc(p.draftVariants.label)}</h4><ul>${p.draftVariants.options.map((option) => `<li>${esc(option)}</li>`).join('')}</ul><p class="draft-card-pending">El precio depende de la variante y est\u00e1 pendiente de confirmar.</p></div>` : '';
     const packageContents = p.draftPackageContents ? `<p class="draft-card-package"><strong>Contenido del paquete:</strong> ${esc(p.draftPackageContents)}</p>` : '<p class="draft-card-package"><strong>Contenido del paquete:</strong> Pendiente de confirmar.</p>';
     const details = `${description}${measures}${features}${variants}${packageContents}`;
-    return `        <article class="catalog-card preview-card" data-product-id="${attr(p.id)}" data-category="${filterCategory(p)}">\n          <div class="catalog-card-media">${draftMedia}</div>\n          <div class="catalog-card-info">\n            <p class="product-kicker">${esc(p.category)}</p>\n            <h3>${esc(p.name)}</h3>\n            <div class="draft-card-details">${details}</div>\n            ${variantMarkup}\n            ${price}\n            ${orderButton}\n            ${orderNote}\n          </div>\n        </article>`.replace(/[ \t]+\n/g, '\n');
+    const detailsLink = `<a class="button button-whatsapp" href="productos/${attr(p.slug)}.html">Ver detalles <span aria-hidden="true">↗</span></a>`;
+    return `        <article class="catalog-card preview-card" data-product-id="${attr(p.id)}" data-category="${filterCategory(p)}">\n          <div class="catalog-card-media">${draftMedia}</div>\n          <div class="catalog-card-info">\n            <p class="product-kicker">${esc(p.category)}</p>\n            <h3>${esc(p.name)}</h3>\n            <div class="draft-card-details">${details}</div>\n            ${variantMarkup}\n            ${price}\n            ${detailsLink}\n            ${orderButton}\n            ${orderNote}\n          </div>\n        </article>`.replace(/[ \t]+\n/g, '\n');
   }
   const media = image
-    ? `<img src="${attr(image.src)}" alt="${attr(image.alt)}" loading="lazy" data-image-fallback>`
+    ? `<img src="${attr(image.src)}" alt="${attr(image.alt)}"${imageDimensionAttrs(image.src)} loading="lazy" data-image-fallback>`
     : `<div class="image-pending" role="img" aria-label="Fotografía pendiente"><span class="pending-icon" aria-hidden="true">⌂</span><span>Fotografía del producto pendiente</span></div>`;
   const orderPrice = `${formatPrice(p.salePriceCop)} COP`;
   const orderButton = `<a class="button button-whatsapp" href="#" data-whatsapp-product="${attr(p.name)}" data-whatsapp-price="${attr(orderPrice)}" data-whatsapp-note="whatsapp-note-${attr(p.id)}" aria-disabled="true">Pedir por WhatsApp</a>`;
@@ -105,9 +161,9 @@ function renderHeroSlide(product, index) {
   const candidate = product.status === 'draft'
     ? product.images.find((image) => image.previewSrc && fs.existsSync(path.resolve(ROOT, image.previewSrc)))
     : product.images.find((image) => !/^https?:/i.test(image.src) && fs.existsSync(path.resolve(ROOT, image.src))) || product.images[0];
-  const source = product.status === 'draft' ? candidate?.previewSrc : candidate?.src;
+  const source = product.status === 'draft' ? optimizedImageSrc(candidate?.previewSrc) : optimizedImageSrc(candidate?.src);
   const image = source
-    ? `<img src="${attr(source)}" alt="${attr(candidate.alt)}" loading="${index === 0 ? 'eager' : 'lazy'}"${index === 0 ? ' fetchpriority="high"' : ''} data-image-fallback>`
+    ? `<img src="${attr(source)}" alt="${attr(candidate.alt)}"${imageDimensionAttrs(source)} loading="${index === 0 ? 'eager' : 'lazy'}"${index === 0 ? ' fetchpriority="high"' : ''} data-image-fallback>`
     : `<div class="image-pending" role="img" aria-label="Fotograf\u00eda pendiente">Fotograf\u00eda pendiente</div>`;
   const price = heroPrice(product);
   return `<div class="hero-slide" data-hero-slide data-hero-name="${attr(product.name)}" data-hero-category="${attr(FILTER_CATEGORY_LABELS[filterCategory(product)])}" data-hero-price-label="${attr(price.label)}" data-hero-price="${attr(price.value)}"${index === 0 ? ' aria-hidden="false"' : ' aria-hidden="true" hidden'}>${image}</div>`;
@@ -119,34 +175,70 @@ function imagePath(src) {
 
 function renderGallery(p, images) {
   if (!images.length) return `<div class="image-pending" role="img" aria-label="Fotografía pendiente"><span class="pending-icon" aria-hidden="true">⌂</span><span>La fotografía original de este producto está pendiente. Añádela en la ruta indicada en README.md.</span></div>`;
-  if (images.length === 1) return `<div class="gallery-stage"><img class="product-image gallery-main-image" src="${attr(imagePath(images[0].src))}" alt="${attr(images[0].alt)}" loading="lazy" data-image-fallback></div>`;
+  if (images.length === 1) return `<div class="gallery-stage"><img class="product-image gallery-main-image" src="${attr(imagePath(images[0].src))}" alt="${attr(images[0].alt)}"${imageDimensionAttrs(images[0].src)} loading="lazy" data-image-fallback></div>`;
   const galleryLabel = `Galería de ${p.name}`;
-  const thumbs = images.map((img, i) => `<button class="gallery-thumbnail${i === 0 ? ' is-active' : ''}" type="button" data-gallery-index="${i}" aria-label="Mostrar imagen ${i+1}" aria-pressed="${i === 0}"><img src="${attr(imagePath(img.src))}" alt="" loading="lazy" data-image-fallback></button>`).join('');
-  return `<div class="gallery-stage"><button class="gallery-arrow gallery-previous" type="button" aria-label="Ver imagen anterior">‹</button><img class="product-image gallery-main-image" src="${attr(imagePath(images[0].src))}" alt="${attr(images[0].alt)}" loading="lazy" data-image-fallback><button class="gallery-arrow gallery-next" type="button" aria-label="Ver imagen siguiente">›</button></div><div class="gallery-thumbnails" aria-label="Seleccionar imagen">${thumbs}</div>`;
+  const thumbs = images.map((img, i) => `<button class="gallery-thumbnail${i === 0 ? ' is-active' : ''}" type="button" data-gallery-index="${i}" aria-label="Mostrar imagen ${i+1}" aria-pressed="${i === 0}"><img src="${attr(imagePath(img.src))}" alt=""${imageDimensionAttrs(img.src)} loading="lazy" data-image-fallback></button>`).join('');
+  return `<div class="gallery-stage"><button class="gallery-arrow gallery-previous" type="button" aria-label="Ver imagen anterior">‹</button><img class="product-image gallery-main-image" src="${attr(imagePath(images[0].src))}" alt="${attr(images[0].alt)}"${imageDimensionAttrs(images[0].src)} loading="lazy" data-image-fallback><button class="gallery-arrow gallery-next" type="button" aria-label="Ver imagen siguiente">›</button></div><div class="gallery-thumbnails" aria-label="Seleccionar imagen">${thumbs}</div>`;
 }
 
-function renderProduct(template, p, images) {
-  const price = formatPrice(p.salePriceCop);
+function renderProduct(template, p, images, options = {}) {
+  const priceCop = options.priceCop ?? p.salePriceCop;
+  const price = formatPrice(priceCop);
   const descriptions = p.description.map((line) => `<p class="product-description">${esc(line)}</p>`).join('\n          ');
-  const features = p.features?.length ? `<h2 class="product-features-title">Características</h2><ul class="product-features">${p.features.map((f) => `<li><strong>${esc(f.label)}:</strong> ${esc(f.value)}</li>`).join('')}</ul>` : '';
+  const features = options.featuresBlock ?? (p.features?.length ? `<h2 class="product-features-title">Características</h2><ul class="product-features">${p.features.map((f) => `<li><strong>${esc(f.label)}:</strong> ${esc(f.value)}</li>`).join('')}</ul>` : '');
   const notices = p.notices?.length ? `<div class="product-notices">${p.notices.map((n) => `<p class="availability-prompt">${esc(n)}</p>`).join('')}</div>` : '';
-  const variants = p.variants?.length ? `<fieldset class="color-selection"><legend>Color para consultar</legend><div class="color-options" data-color-picker="${attr(p.id)}">${p.variants.map((v) => `<button class="color-option" type="button" data-color-value="${attr(v.name)}" aria-pressed="false"><span class="color-chip" style="--chip-color:${attr(v.swatch)}" aria-hidden="true"></span>${esc(v.name)}</button>`).join('')}</div><p class="color-note">La disponibilidad del color se confirma con el proveedor.</p></fieldset>` : '';
+  const variants = options.variantsBlock ?? (p.variants?.length ? `<fieldset class="color-selection"><legend>Color para consultar</legend><div class="color-options" data-color-picker="${attr(p.id)}">${p.variants.map((v) => `<button class="color-option" type="button" data-color-value="${attr(v.name)}" aria-pressed="false"><span class="color-chip" style="--chip-color:${attr(v.swatch)}" aria-hidden="true"></span>${esc(v.name)}</button>`).join('')}</div><p class="color-note">La disponibilidad del color se confirma con el proveedor.</p></fieldset>` : '');
   const mainImage = images[0];
   const socialImage = mainImage ? (/^https:\/\//i.test(mainImage.src) ? mainImage.src : 'https://casaclara.com.co/' + mainImage.src) : '';
   const social = mainImage ? `<meta property="og:image" content="${attr(socialImage)}"><meta property="og:image:alt" content="${attr(mainImage.alt)}">` : '';
   const twitter = mainImage ? `<meta name="twitter:image" content="${attr(socialImage)}">` : '';
   const galleryAttrs = images.length ? `data-product-gallery aria-label="${attr(`Galería de ${p.name}`)}"` : '';
+  const canonical = `https://casaclara.com.co/productos/${attr(p.slug)}.html`;
+  const schema = priceCop ? `<script type="application/ld+json">${JSON.stringify({
+    '@context': 'https://schema.org', '@type': 'Product', name: p.name,
+    description: p.description.join(' '), image: images.map((image) => publicImageUrl(image.src)),
+    offers: { '@type': 'Offer', url: canonical, priceCurrency: 'COP', price: String(priceCop) }
+  }).replace(/</g, '\\u003c')}</script>` : '';
   const replacements = {
-    '{{SEO_DESCRIPTION}}': esc(p.seo.description), '{{SEO_TITLE}}': esc(p.seo.title),
-    '{{CANONICAL}}': `https://casaclara.com.co/productos/${attr(p.slug)}.html`, '{{SOCIAL_IMAGE}}': social,
+    '{{SEO_DESCRIPTION}}': esc(options.seoDescription || p.seo.description), '{{SEO_TITLE}}': esc(options.seoTitle || p.seo.title), '{{PRODUCT_SCHEMA}}': schema,
+    '{{CANONICAL}}': canonical, '{{SOCIAL_IMAGE}}': social,
     '{{TWITTER_CARD}}': mainImage ? 'summary_large_image' : 'summary', '{{TWITTER_IMAGE}}': twitter,
     '{{CATEGORY}}': esc(p.category), '{{NAME}}': esc(p.name), '{{GALLERY_CLASS}}': images.length ? 'product-gallery' : 'product-gallery-pending',
     '{{GALLERY_ATTRIBUTES}}': galleryAttrs, '{{GALLERY_CONTENT}}': renderGallery(p, images),
     '{{DESCRIPTION_BLOCK}}': descriptions, '{{FEATURES_BLOCK}}': features, '{{NOTICES_BLOCK}}': notices,
-    '{{VARIANTS_BLOCK}}': variants, '{{PRICE}}': price, '{{WHATSAPP_NAME}}': attr(p.name),
-    '{{VARIANT_ATTRIBUTE}}': p.variants?.length ? `data-whatsapp-color-picker="${attr(p.id)}"` : ''
+    '{{VARIANTS_BLOCK}}': variants, '{{PRICE}}': price, '{{PRICE_LABEL}}': esc(options.priceLabel || 'Precio'), '{{WHATSAPP_NAME}}': attr(p.name),
+    '{{VARIANT_ATTRIBUTE}}': options.variantAttribute || (p.variants?.length ? `data-whatsapp-color-picker="${attr(p.id)}"` : '')
   };
   return Object.entries(replacements).reduce((html, [token, value]) => html.replaceAll(token, value), template).replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n');
+}
+
+function renderDraftProduct(template, product, images) {
+  const pricing = draftPrice(product);
+  if (!pricing) throw new Error(`El borrador ${product.dropiId} no tiene precio para su ficha.`);
+  const selectId = `detail-variant-${product.id}`;
+  const offers = product.draftOffers || [];
+  const variantOptions = offers.map((offer) => {
+    const optionPrice = Number.isInteger(offer.priceCop) ? `${formatPrice(pricing.price)} COP` : (offer.priceText || `${formatPrice(pricing.price)} COP`);
+    return `<option value="${attr(offer.name)}" data-price-text="${attr(optionPrice)}">${esc(offer.name)} — ${esc(optionPrice)}</option>`;
+  }).join('');
+  const variantsBlock = offers.length
+    ? `<fieldset class="color-selection"><legend>Consulta por ${esc(product.draftVariants?.label || 'opción')}</legend><label class="draft-variant-label" for="${attr(selectId)}">Selecciona ${esc(product.draftVariants?.label || 'una opción')}</label><select class="draft-variant-select" id="${attr(selectId)}" data-whatsapp-variant-select="${attr(selectId)}"><option value="">Elige una opción</option>${variantOptions}</select></fieldset>`
+    : (product.draftVariants?.options?.length ? `<div class="product-notices"><p>Opciones indicadas: ${esc(product.draftVariants.label || 'variante')}.</p><ul>${product.draftVariants.options.map((option) => `<li>${esc(option)}</li>`).join('')}</ul></div>` : '');
+  const featureItems = (product.draftFeatures || []).map((feature) => `<li>${esc(feature)}</li>`).join('');
+  const measures = product.draftMeasures ? `<p class="product-description"><strong>Medidas indicadas:</strong> ${esc(product.draftMeasures)}</p>` : '';
+  const contents = product.draftPackageContents ? `<p class="product-description"><strong>Contenido indicado del paquete:</strong> ${esc(product.draftPackageContents)}</p>` : '';
+  const featuresBlock = `${featureItems ? `<h2 class="product-features-title">Características</h2><ul class="product-features">${featureItems}</ul>` : ''}${measures}${contents}`;
+  const fullDescription = product.description.join(' ');
+  const seoDescription = fullDescription.length <= 155 ? fullDescription : `${fullDescription.slice(0, 152).replace(/\s+\S*$/, '')}…`;
+  return renderProduct(template, product, images, {
+    priceCop: pricing.price,
+    priceLabel: pricing.label,
+    featuresBlock,
+    variantsBlock,
+    seoTitle: `${product.name} | Casa Clara`,
+    seoDescription,
+    variantAttribute: offers.length ? `data-whatsapp-variant-select="${attr(selectId)}"` : ''
+  });
 }
 
 function buildOutputs(root = ROOT) {
@@ -158,7 +250,7 @@ function buildOutputs(root = ROOT) {
   const indexTemplate = fs.readFileSync(path.join(root, 'templates/index.html'), 'utf8');
   const cards = [...products, ...drafts].map((p) => {
     if (p.status === 'draft') return renderCard(p, []);
-    const found = p.images.filter((img) => /^https:\/\//i.test(img.src) || fs.existsSync(path.resolve(root, img.src)));
+    const found = p.images.filter((img) => /^https:\/\//i.test(img.src) || fs.existsSync(path.resolve(root, img.src))).map((img) => ({ ...img, src: optimizedImageSrc(img.src, root) }));
     return renderCard(p, found);
   }).join('\n');
   const allCatalogProducts = [...products, ...drafts];
@@ -170,11 +262,20 @@ function buildOutputs(root = ROOT) {
   outputs.set('index.html', `${MARKER}\n${home}`);
   const productTemplate = fs.readFileSync(path.join(root, 'templates/product.html'), 'utf8');
   for (const p of products) {
-    const images = p.images.filter((img) => /^https:\/\//i.test(img.src) || fs.existsSync(path.resolve(root, img.src)));
+    const images = p.images.filter((img) => /^https:\/\//i.test(img.src) || fs.existsSync(path.resolve(root, img.src))).map((img) => ({ ...img, src: optimizedImageSrc(img.src, root) }));
     if (images.length !== p.images.length) console.warn(`Aviso: ${p.id}: ${p.images.length - images.length} imagen(es) no encontrada(s); no se generará un enlace roto.`);
     outputs.set(`productos/${p.slug}.html`, `${MARKER}\n${renderProduct(productTemplate, p, images)}`);
   }
-  const urls = ['https://casaclara.com.co/', ...products.map((p) => `https://casaclara.com.co/productos/${p.slug}.html`)];
+  for (const p of drafts) {
+    const images = p.images.map((image) => {
+      const originalPath = image.previewSrc && fs.existsSync(path.resolve(root, image.previewSrc)) ? image.previewSrc : image.src;
+      const localPath = optimizedImageSrc(originalPath, root);
+      return { ...image, src: localPath };
+    }).filter((image) => /^https:\/\//i.test(image.src) || fs.existsSync(path.resolve(root, image.src)));
+    if (images.length !== p.images.length) console.warn(`Aviso: ${p.dropiId}: ${p.images.length - images.length} imagen(es) no encontrada(s) en su ficha.`);
+    outputs.set(`productos/${p.slug}.html`, `${MARKER}\n${renderDraftProduct(productTemplate, p, images)}`);
+  }
+  const urls = ['https://casaclara.com.co/', ...[...products, ...drafts].map((p) => `https://casaclara.com.co/productos/${p.slug}.html`)];
   outputs.set('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n${MARKER}\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((url) => `  <url><loc>${url}</loc></url>`).join('\n')}\n</urlset>\n`);
   return outputs;
 }

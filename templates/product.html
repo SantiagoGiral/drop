@@ -8,8 +8,10 @@
   <meta name="robots" content="index, follow">
   <title>{{SEO_TITLE}}</title>
   <link rel="canonical" href="{{CANONICAL}}">
+  {{PRODUCT_SCHEMA}}
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/draft-catalog.css">
   <meta property="og:type" content="product">
   <meta property="og:locale" content="es_CO">
   <meta property="og:site_name" content="Casa Clara">
@@ -42,7 +44,7 @@
           {{FEATURES_BLOCK}}
           {{NOTICES_BLOCK}}
           {{VARIANTS_BLOCK}}
-          <div class="price-row"><span>Precio</span><strong>{{PRICE}} <small>COP</small></strong></div>
+          <div class="price-row"><span>{{PRICE_LABEL}}</span><strong>{{PRICE}} <small>COP</small></strong></div>
           <a class="button button-whatsapp" href="#" target="_blank" rel="noopener noreferrer" data-whatsapp-product="{{WHATSAPP_NAME}}" data-whatsapp-price="{{PRICE}} COP" {{VARIANT_ATTRIBUTE}} data-whatsapp-note="contact-note"><span class="whatsapp-icon" aria-hidden="true">◉</span> Consultar y pedir por WhatsApp <span aria-hidden="true">↗</span></a>
           <p class="contact-note" id="contact-note">WhatsApp no está configurado. Añade un número en js/config.js para habilitar consultas.</p>
         </div>

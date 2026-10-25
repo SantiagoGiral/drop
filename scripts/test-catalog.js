@@ -107,6 +107,8 @@ assert.match(homepage, /hero-product[\s\S]*img\/(?:optimized\/)?imagenDrop1\.(?:
 assert.equal((fs.readFileSync(path.join(root,'templates/index.html'),'utf8').match(/data-hero-title/g) || []).length, 1, 'el pie del carrusel no duplica el título');
 assert.equal((homepage.match(/data-hero-slide(?:\s|>)/g) || []).length, 17, 'carrusel destaca todos los productos');
 for (const control of ['data-hero-previous','data-hero-next','data-hero-toggle','data-hero-count']) assert.ok(homepage.includes(control), `carrusel incluye control ${control}`);
+assert.ok(homepage.includes('data-hero-product-id="escurridor-platos"') && homepage.includes('id="product-escurridor-platos"'), 'carrusel enlaza a la tarjeta del producto activo');
+assert.match(fs.readFileSync(path.join(root,'js/main.js'),'utf8'), /querySelector\('\.hero-product-price \[data-hero-price\]'\)/, 'el carrusel actualiza el precio sin reemplazar la diapositiva ni su imagen');
 assert.ok(!homepage.includes('class="art-card"') && !homepage.includes('class="art-sun"'), 'se elimina la ilustracion hero anterior');
 assert.equal((homepage.match(/data-category="(?:cocina|bano|limpieza|tecnologia|hogar)"/g) || []).length, 17, 'todas las tarjetas tienen categoria filtrable');
 const shoeCardStart = homepage.indexOf('data-product-id="dropi-1829387"');

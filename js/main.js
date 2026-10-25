@@ -40,7 +40,8 @@
     const category = heroCarousel.querySelector('[data-hero-category]');
     const title = heroCarousel.querySelector('[data-hero-title]');
     const priceLabel = heroCarousel.querySelector('[data-hero-price-label]');
-    const price = heroCarousel.querySelector('[data-hero-price]');
+    const price = heroCarousel.querySelector('.hero-product-price [data-hero-price]');
+    const productLink = heroCarousel.querySelector('[data-hero-product-link]');
     if (slides.length) {
       let current = Math.max(0, slides.findIndex((slide) => !slide.hidden));
       let userPaused = Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
@@ -61,6 +62,9 @@
         if (title) title.textContent = active.dataset.heroName || '';
         if (priceLabel) priceLabel.textContent = active.dataset.heroPriceLabel || '';
         if (price) price.textContent = active.dataset.heroPrice || '';
+        if (productLink && active.dataset.heroProductId) {
+          productLink.href = `#product-${active.dataset.heroProductId}`;
+        }
       };
       const stop = () => { if (timer) clearInterval(timer); timer = null; };
       const start = () => {
@@ -72,6 +76,10 @@
       const step = (amount) => { render(current + amount); start(); };
       previous?.addEventListener('click', () => step(-1));
       next?.addEventListener('click', () => step(1));
+      productLink?.addEventListener('click', () => {
+        const target = document.getElementById(productLink.hash.slice(1));
+        if (target?.hidden) document.querySelector('[data-catalog-filter="all"]')?.click();
+      });
       toggle?.addEventListener('click', () => {
         userPaused = !userPaused;
         toggle.setAttribute('aria-pressed', String(userPaused));
